@@ -1,0 +1,19 @@
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# virtual environment
+.env/
+.venv/
+venv/
+ENV/
+
+# Environment variables
+.env
+*.env
+
+# Alembic migrations
+alembic/versions/*.__pycache__
+
