@@ -19,3 +19,4 @@ class Flashcard(Base):
 
     # Relationships
     note = relationship("Note", back_populates="flashcards")
+    flashcard_progress = relationship("UserFlashcardProgress", back_populates="flashcard", cascade="all, delete-orphan")

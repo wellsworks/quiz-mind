@@ -19,4 +19,4 @@ class UserFlashcardProgress(Base):
 
     # Relationships
     user = relationship("User", back_populates="flashcard_progress")
-    flashcard = relationship("Flashcard", back_populates="user_progress")
+    flashcard = relationship("Flashcard", back_populates="flashcard_progress")

@@ -2,18 +2,17 @@
 
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from app.db import SessionLocal
+from app.db import get_db
 from sqlalchemy import text
+from app.routers import user
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = FastAPI()
 
-# Dependency to get DB session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# Include routers
+app.include_router(user.router)
 
 @app.get("/")
 def health_check(db: Session = Depends(get_db)):

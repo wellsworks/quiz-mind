@@ -18,3 +18,11 @@ class Base(DeclarativeBase):
 
 engine = create_engine(DATABASE_URL, echo=False, future=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, future=True)
+
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

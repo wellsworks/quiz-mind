@@ -8,8 +8,7 @@ class StudySessionBase(BaseModel):
     ended_at: datetime | None = None
 
 class StudySessionCreate(StudySessionBase):
-    user_id: int
-    note_id: int | None = None
+    pass
 
 class StudySessionUpdate(StudySessionBase):
     pass

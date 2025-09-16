@@ -1,11 +1,11 @@
 # user.py model
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from app.db import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 
-current_timestamp = datetime.now(timezone.utc)
+current_timestamp = (datetime.now(timezone.utc)).isoformat()
 
 class User(Base):
     __tablename__ = "users"
@@ -13,7 +13,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    created_at = Column(String, nullable=False, default=current_timestamp)
+    created_at = Column(DateTime, nullable=False, default=current_timestamp)
 
     # Relationships
     notes = relationship("Note", back_populates="user", cascade="all, delete-orphan")

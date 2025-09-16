@@ -16,8 +16,7 @@ class UserFlashcardProgressBase(BaseModel):
     repetition_count: int = 0
 
 class UserFlashcardProgressCreate(UserFlashcardProgressBase):
-    user_id: int
-    flashcard_id: int
+    pass
 
 class UserFlashcardProgressUpdate(UserFlashcardProgressBase):
     pass

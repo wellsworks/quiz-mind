@@ -11,11 +11,10 @@ class FlashcardSource(str, Enum):
 class FlashcardBase(BaseModel):
     question: str
     answer: str
-    created_at: datetime
     source: FlashcardSource
 
 class FlashcardCreate(FlashcardBase):
-    note_id: int
+    pass
 
 class FlashcardUpdate(FlashcardBase):
     pass    
@@ -23,6 +22,7 @@ class FlashcardUpdate(FlashcardBase):
 class FlashcardOut(FlashcardBase):
     id: int
     note_id: int
+    created_at: datetime
 
     class Config:
         orm_mode = True
