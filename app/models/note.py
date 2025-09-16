@@ -1,11 +1,10 @@
 # note.py model
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from app.db import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 
-current_timestamp = datetime.now(timezone.utc)
 
 class Note(Base):
     __tablename__ = "notes"
@@ -14,7 +13,7 @@ class Note(Base):
     title = Column(String, index=True, nullable=False)
     content = Column(Text, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    created_at = Column(String, nullable=False, default=current_timestamp)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     user = relationship("User", back_populates="notes")
