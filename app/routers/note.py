@@ -52,3 +52,12 @@ def partial_update_note(note_id: int, note: NoteUpdate, db: Session = Depends(ge
     db.refresh(db_note)
     return NoteOut.model_validate(db_note, from_attributes=True)
 
+@router.delete("/{note_id}", response_model=dict)
+def delete_note(note_id: int, db: Session = Depends(get_db)):
+    db_note = db.query(Note).filter(Note.id == note_id).first()
+    if not db_note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    db.delete(db_note)
+    db.commit()
+    return {"detail": "Note deleted"}
+
