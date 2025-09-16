@@ -12,6 +12,7 @@ class FlashcardBase(BaseModel):
     question: str
     answer: str
     source: FlashcardSource
+    note_id: int
 
 class FlashcardCreate(FlashcardBase):
     pass
@@ -21,7 +22,6 @@ class FlashcardUpdate(FlashcardBase):
 
 class FlashcardOut(FlashcardBase):
     id: int
-    note_id: int
     created_at: datetime
 
     class Config:
