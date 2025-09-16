@@ -28,3 +28,27 @@ def list_notes(db: Session = Depends(get_db)):
     notes = db.query(Note).all()
     return [NoteOut.model_validate(note, from_attributes=True) for note in notes]
 
+@router.put("/{note_id}", response_model=NoteOut)
+def update_note(note_id: int, note: NoteUpdate, db: Session = Depends(get_db)):
+    db_note = db.query(Note).filter(Note.id == note_id).first()
+    if not db_note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    db_note.title = note.title
+    db_note.content = note.content
+    db.commit()
+    db.refresh(db_note)
+    return NoteOut.model_validate(db_note, from_attributes=True)
+
+@router.patch("/{note_id}", response_model=NoteOut)
+def partial_update_note(note_id: int, note: NoteUpdate, db: Session = Depends(get_db)):
+    db_note = db.query(Note).filter(Note.id == note_id).first()
+    if not db_note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    if note.title:
+        db_note.title = note.title
+    if note.content:
+        db_note.content = note.content
+    db.commit()
+    db.refresh(db_note)
+    return NoteOut.model_validate(db_note, from_attributes=True)
+
