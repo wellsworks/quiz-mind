@@ -30,3 +30,14 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 def list_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
     return [UserOut.model_validate(user, from_attributes=True) for user in users]
+
+@router.put("/{user_id}", response_model=UserOut)
+def update_user(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_user.email = user.email
+    db_user.password_hash = user.password  # update to actual password hashing
+    db.commit()
+    db.refresh(db_user)
+    return UserOut.model_validate(db_user, from_attributes=True)
