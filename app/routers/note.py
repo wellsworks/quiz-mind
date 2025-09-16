@@ -16,3 +16,10 @@ def create_note(note: NoteCreate, db: Session = Depends(get_db)):
     db.refresh(new_note)
     return NoteOut.model_validate(new_note, from_attributes=True)
 
+@router.get("/{note_id}", response_model=NoteOut)
+def get_note(note_id: int, db: Session = Depends(get_db)):
+    db_note = db.query(Note).filter(Note.id == note_id).first()
+    if not db_note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    return NoteOut.model_validate(db_note, from_attributes=True)
+
