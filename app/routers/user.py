@@ -41,3 +41,16 @@ def update_user(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return UserOut.model_validate(db_user, from_attributes=True)
+
+@router.patch("/{user_id}", response_model=UserOut)
+def partial_update_user(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.email:
+        db_user.email = user.email
+    if user.password:
+        db_user.password_hash = user.password  # update to actual password hashing
+    db.commit()
+    db.refresh(db_user)
+    return UserOut.model_validate(db_user, from_attributes=True)
