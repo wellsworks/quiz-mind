@@ -26,3 +26,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return UserOut.model_validate(db_user, from_attributes=True)
     
+@router.get("/", response_model=list[UserOut])
+def list_users(db: Session = Depends(get_db)):
+    users = db.query(User).all()
+    return [UserOut.model_validate(user, from_attributes=True) for user in users]
