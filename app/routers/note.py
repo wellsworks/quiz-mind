@@ -23,3 +23,8 @@ def get_note(note_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Note not found")
     return NoteOut.model_validate(db_note, from_attributes=True)
 
+@router.get("/", response_model=list[NoteOut])
+def list_notes(db: Session = Depends(get_db)):
+    notes = db.query(Note).all()
+    return [NoteOut.model_validate(note, from_attributes=True) for note in notes]
+
