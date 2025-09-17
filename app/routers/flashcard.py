@@ -51,3 +51,12 @@ def partial_update_flashcard(flashcard_id: int, flashcard: FlashcardUpdate, db: 
     db.refresh(db_flashcard)
     return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
 
+@router.delete("/{flashcard_id}", response_model=dict)
+def delete_flashcard(flashcard_id: int, db: Session = Depends(get_db)):
+    db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
+    if not db_flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+    db.delete(db_flashcard)
+    db.commit()
+    return {"detail": "Flashcard deleted"}
+
