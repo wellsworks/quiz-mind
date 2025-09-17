@@ -16,3 +16,15 @@ def create_study_session(session: StudySessionCreate, db: Session = Depends(get_
     db.refresh(new_session)
     return StudySessionOut.model_validate(new_session, from_attributes=True)
 
+@router.get("/{session_id}", response_model=StudySessionOut)
+def get_study_session(session_id: int, db: Session = Depends(get_db)):
+    db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
+    if not db_session:
+        raise HTTPException(status_code=404, detail="Study session not found")
+    return StudySessionOut.model_validate(db_session, from_attributes=True)
+
+@router.get("/", response_model=list[StudySessionOut])
+def list_study_sessions(db: Session = Depends(get_db)):
+    sessions = db.query(StudySession).all()
+    return [StudySessionOut.model_validate(session, from_attributes=True) for session in sessions]
+
