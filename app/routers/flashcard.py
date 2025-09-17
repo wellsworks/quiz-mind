@@ -23,3 +23,8 @@ def get_flashcard(flashcard_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Flashcard not found")
     return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
 
+@router.get("/", response_model=list[FlashcardOut])
+def list_flashcards(db: Session = Depends(get_db)):
+    flashcards = db.query(Flashcard).all()
+    return [FlashcardOut.model_validate(fc, from_attributes=True) for fc in flashcards]
+
