@@ -5,12 +5,14 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.schemas.note import NoteCreate, NoteOut, NoteUpdate
 from app.models.note import Note
+from app.models.user import User
+from app.deps import get_current_user
 
 router = APIRouter(prefix="/notes", tags=["notes"])
 
 @router.post("/", response_model=NoteOut)
-def create_note(note: NoteCreate, db: Session = Depends(get_db)):
-    new_note = Note(title=note.title, content=note.content, user_id=1)  # Assuming user_id=1 for simplicity, update after auth is implemented
+def create_note(note: NoteCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    new_note = Note(title=note.title, content=note.content, user_id=current_user.id)  # Associate note with current user
     db.add(new_note)
     db.commit()
     db.refresh(new_note)
