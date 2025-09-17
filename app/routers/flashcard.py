@@ -28,3 +28,26 @@ def list_flashcards(db: Session = Depends(get_db)):
     flashcards = db.query(Flashcard).all()
     return [FlashcardOut.model_validate(fc, from_attributes=True) for fc in flashcards]
 
+@router.put("/{flashcard_id}", response_model=FlashcardOut)
+def update_flashcard(flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db)):
+    db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
+    if not db_flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+    for key, value in flashcard.model_dump().items():
+        setattr(db_flashcard, key, value)
+    db.commit()
+    db.refresh(db_flashcard)
+    return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
+
+@router.patch("/{flashcard_id}", response_model=FlashcardOut)
+def partial_update_flashcard(flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db)):
+    db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
+    if not db_flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+    flashcard_data = flashcard.model_dump(exclude_unset=True)
+    for key, value in flashcard_data.items():
+        setattr(db_flashcard, key, value)
+    db.commit()
+    db.refresh(db_flashcard)
+    return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
+
