@@ -50,3 +50,12 @@ def partial_update_study_session(session_id: int, session: StudySessionUpdate, d
     db.refresh(db_session)
     return StudySessionOut.model_validate(db_session, from_attributes=True)
 
+@router.delete("/{session_id}", response_model=dict)
+def delete_study_session(session_id: int, db: Session = Depends(get_db)):
+    db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
+    if not db_session:
+        raise HTTPException(status_code=404, detail="Study session not found")
+    db.delete(db_session)
+    db.commit()
+    return {"detail": "Study session deleted"}
+
