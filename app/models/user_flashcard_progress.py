@@ -13,7 +13,7 @@ class UserFlashcardProgress(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     flashcard_id = Column(Integer, ForeignKey("flashcards.id"), nullable=False)
-    status = Enum('unseen', 'learning', 'reviewing', 'mastered', name='flashcard_status', nullable=False, default='unseen')
+    status = Column(Enum('unseen', 'learning', 'reviewing', 'mastered', name='flashcard_status', nullable=False, default='unseen'))
     last_reviewed_at = Column(DateTime, nullable=True)
     repetition_count = Column(Integer, nullable=True, default=0)
 
