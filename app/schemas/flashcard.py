@@ -5,8 +5,8 @@ from datetime import datetime
 from enum import Enum
 
 class FlashcardSource(str, Enum):
-    user_created = "user_created"
-    ai_generated = "ai_generated"
+    user_created = 'user_created'
+    ai_generated = 'ai_generated'
 
 class FlashcardBase(BaseModel):
     question: str

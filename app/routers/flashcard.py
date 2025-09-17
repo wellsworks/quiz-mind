@@ -16,3 +16,10 @@ def create_flashcard(flashcard: FlashcardCreate, db: Session = Depends(get_db)):
     db.refresh(new_flashcard)
     return FlashcardOut.model_validate(new_flashcard, from_attributes=True)
 
+@router.get("/{flashcard_id}", response_model=FlashcardOut)
+def get_flashcard(flashcard_id: int, db: Session = Depends(get_db)):
+    db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
+    if not db_flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+    return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
+
