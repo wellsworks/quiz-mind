@@ -24,5 +24,13 @@ def register(user_create: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return UserOut.model_validate(new_user, from_attributes=True)
 
+@router.post("/login", response_model=auth_schemas.Token)
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == form_data.username).first()
+    if not user or not security.verify_password(form_data.password, user.password_hash):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+    access_token_expires = timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = security.create_access_token(subject=str(user.id), expires_delta=access_token_expires)
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
