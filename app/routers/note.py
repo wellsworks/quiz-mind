@@ -19,15 +19,17 @@ def create_note(note: NoteCreate, db: Session = Depends(get_db), current_user: U
     return NoteOut.model_validate(new_note, from_attributes=True)
 
 @router.get("/{note_id}", response_model=NoteOut)
-def get_note(note_id: int, db: Session = Depends(get_db)):
+def get_note(note_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_note = db.query(Note).filter(Note.id == note_id).first()
     if not db_note:
         raise HTTPException(status_code=404, detail="Note not found")
+    if db_note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this note")
     return NoteOut.model_validate(db_note, from_attributes=True)
 
 @router.get("/", response_model=list[NoteOut])
-def list_notes(db: Session = Depends(get_db)):
-    notes = db.query(Note).all()
+def list_notes(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    notes = db.query(Note).filter(Note.user_id == current_user.id).all()
     return [NoteOut.model_validate(note, from_attributes=True) for note in notes]
 
 @router.put("/{note_id}", response_model=NoteOut)
