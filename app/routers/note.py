@@ -61,10 +61,12 @@ def partial_update_note(note_id: int, note: NoteUpdate, db: Session = Depends(ge
     return NoteOut.model_validate(db_note, from_attributes=True)
 
 @router.delete("/{note_id}", response_model=dict)
-def delete_note(note_id: int, db: Session = Depends(get_db)):
+def delete_note(note_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_note = db.query(Note).filter(Note.id == note_id).first()
     if not db_note:
         raise HTTPException(status_code=404, detail="Note not found")
+    if db_note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this note")
     db.delete(db_note)
     db.commit()
     return {"detail": "Note deleted"}
