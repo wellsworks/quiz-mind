@@ -33,10 +33,12 @@ def list_notes(db: Session = Depends(get_db), current_user: User = Depends(get_c
     return [NoteOut.model_validate(note, from_attributes=True) for note in notes]
 
 @router.put("/{note_id}", response_model=NoteOut)
-def update_note(note_id: int, note: NoteUpdate, db: Session = Depends(get_db)):
+def update_note(note_id: int, note: NoteUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_note = db.query(Note).filter(Note.id == note_id).first()
     if not db_note:
         raise HTTPException(status_code=404, detail="Note not found")
+    if db_note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this note")
     db_note.title = note.title
     db_note.content = note.content
     db.commit()
@@ -44,10 +46,12 @@ def update_note(note_id: int, note: NoteUpdate, db: Session = Depends(get_db)):
     return NoteOut.model_validate(db_note, from_attributes=True)
 
 @router.patch("/{note_id}", response_model=NoteOut)
-def partial_update_note(note_id: int, note: NoteUpdate, db: Session = Depends(get_db)):
+def partial_update_note(note_id: int, note: NoteUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_note = db.query(Note).filter(Note.id == note_id).first()
     if not db_note:
         raise HTTPException(status_code=404, detail="Note not found")
+    if db_note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this note")
     if note.title:
         db_note.title = note.title
     if note.content:
