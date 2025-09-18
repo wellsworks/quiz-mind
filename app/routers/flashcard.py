@@ -5,11 +5,20 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.schemas.flashcard import FlashcardCreate, FlashcardOut, FlashcardUpdate
 from app.models.flashcard import Flashcard
+from app.models.user import User
+from app.models.note import Note
+from app.deps import get_current_user
 
 router = APIRouter(prefix="/flashcards", tags=["flashcards"])
 
 @router.post("/", response_model=FlashcardOut)
-def create_flashcard(flashcard: FlashcardCreate, db: Session = Depends(get_db)):
+def create_flashcard(flashcard: FlashcardCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # Ensure the flashcard's note exists and belongs to the current user
+    db_note = db.query(Note).filter(Note.id == flashcard.note_id).first()
+    if not db_note:
+        raise HTTPException(status_code=404, detail="Associated note not found")
+    if db_note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to add flashcard to this note")
     new_flashcard = Flashcard(**flashcard.model_dump())
     db.add(new_flashcard)
     db.commit()
