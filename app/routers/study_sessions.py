@@ -5,11 +5,15 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.schemas.study_sessions import StudySessionCreate, StudySessionOut, StudySessionUpdate
 from app.models.study_sessions import StudySession
+from app.deps import get_current_user
+from app.models.user import User
 
 router = APIRouter(prefix="/study-sessions", tags=["study_sessions"])
 
 @router.post("/", response_model=StudySessionOut)
-def create_study_session(session: StudySessionCreate, db: Session = Depends(get_db)):
+def create_study_session(session: StudySessionCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if session.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to create session for this user")
     new_session = StudySession(**session.model_dump())
     db.add(new_session)
     db.commit()
