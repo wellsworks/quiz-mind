@@ -26,15 +26,18 @@ def create_flashcard(flashcard: FlashcardCreate, db: Session = Depends(get_db), 
     return FlashcardOut.model_validate(new_flashcard, from_attributes=True)
 
 @router.get("/{flashcard_id}", response_model=FlashcardOut)
-def get_flashcard(flashcard_id: int, db: Session = Depends(get_db)):
+def get_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
+    # Ensure the flashcard belongs to a note owned by the current user
+    if db_flashcard.note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this flashcard")
     return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
 
 @router.get("/", response_model=list[FlashcardOut])
-def list_flashcards(db: Session = Depends(get_db)):
-    flashcards = db.query(Flashcard).all()
+def list_flashcards(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    flashcards = db.query(Flashcard).join(Note).filter(Note.user_id == current_user.id).all()
     return [FlashcardOut.model_validate(fc, from_attributes=True) for fc in flashcards]
 
 @router.put("/{flashcard_id}", response_model=FlashcardOut)
