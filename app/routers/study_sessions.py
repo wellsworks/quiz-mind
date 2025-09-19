@@ -35,10 +35,14 @@ def list_study_sessions(db: Session = Depends(get_db), current_user: User = Depe
     return [StudySessionOut.model_validate(session, from_attributes=True) for session in sessions]
 
 @router.put("/{session_id}", response_model=StudySessionOut)
-def update_study_session(session_id: int, session: StudySessionUpdate, db: Session = Depends(get_db)):
+def update_study_session(session_id: int, session: StudySessionUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
+    if db_session.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this study session")
+    if session.user_id and session.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to change the user of this study session")
     for key, value in session.model_dump().items():
         setattr(db_session, key, value)
     db.commit()
@@ -46,10 +50,14 @@ def update_study_session(session_id: int, session: StudySessionUpdate, db: Sessi
     return StudySessionOut.model_validate(db_session, from_attributes=True)
 
 @router.patch("/{session_id}", response_model=StudySessionOut)
-def partial_update_study_session(session_id: int, session: StudySessionUpdate, db: Session = Depends(get_db)):
+def partial_update_study_session(session_id: int, session: StudySessionUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
+    if db_session.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this study session")
+    if session.user_id and session.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to change the user of this study session")
     for key, value in session.model_dump(exclude_unset=True).items():
         setattr(db_session, key, value)
     db.commit()
