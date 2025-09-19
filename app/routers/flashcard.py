@@ -80,10 +80,12 @@ def partial_update_flashcard(
     return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
 
 @router.delete("/{flashcard_id}", response_model=dict)
-def delete_flashcard(flashcard_id: int, db: Session = Depends(get_db)):
+def delete_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
+    if db_flashcard.note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this flashcard")
     db.delete(db_flashcard)
     db.commit()
     return {"detail": "Flashcard deleted"}
