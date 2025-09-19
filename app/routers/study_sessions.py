@@ -65,10 +65,12 @@ def partial_update_study_session(session_id: int, session: StudySessionUpdate, d
     return StudySessionOut.model_validate(db_session, from_attributes=True)
 
 @router.delete("/{session_id}", response_model=dict)
-def delete_study_session(session_id: int, db: Session = Depends(get_db)):
+def delete_study_session(session_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
+    if db_session.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this study session")
     db.delete(db_session)
     db.commit()
     return {"detail": "Study session deleted"}
