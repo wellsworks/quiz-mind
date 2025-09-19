@@ -41,10 +41,16 @@ def list_flashcards(db: Session = Depends(get_db), current_user: User = Depends(
     return [FlashcardOut.model_validate(fc, from_attributes=True) for fc in flashcards]
 
 @router.put("/{flashcard_id}", response_model=FlashcardOut)
-def update_flashcard(flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db)):
+def update_flashcard(
+    flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+    ):
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
+    if db_flashcard.note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this flashcard")
+    if flashcard.note_id != db_flashcard.note_id:
+        raise HTTPException(status_code=403, detail="Not authorized to change the note of this flashcard")
     for key, value in flashcard.model_dump().items():
         setattr(db_flashcard, key, value)
     db.commit()
@@ -52,10 +58,16 @@ def update_flashcard(flashcard_id: int, flashcard: FlashcardUpdate, db: Session 
     return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
 
 @router.patch("/{flashcard_id}", response_model=FlashcardOut)
-def partial_update_flashcard(flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db)):
+def partial_update_flashcard(
+    flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+    ):
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
+    if db_flashcard.note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this flashcard")
+    if flashcard.note_id != db_flashcard.note_id:
+        raise HTTPException(status_code=403, detail="Not authorized to change the note of this flashcard")
     flashcard_data = flashcard.model_dump(exclude_unset=True)
     for key, value in flashcard_data.items():
         setattr(db_flashcard, key, value)
