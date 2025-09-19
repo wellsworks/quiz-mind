@@ -21,15 +21,17 @@ def create_study_session(session: StudySessionCreate, db: Session = Depends(get_
     return StudySessionOut.model_validate(new_session, from_attributes=True)
 
 @router.get("/{session_id}", response_model=StudySessionOut)
-def get_study_session(session_id: int, db: Session = Depends(get_db)):
+def get_study_session(session_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
+    if db_session.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this study session")
     return StudySessionOut.model_validate(db_session, from_attributes=True)
 
 @router.get("/", response_model=list[StudySessionOut])
-def list_study_sessions(db: Session = Depends(get_db)):
-    sessions = db.query(StudySession).all()
+def list_study_sessions(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    sessions = db.query(StudySession).filter(StudySession.user_id == current_user.id).all()
     return [StudySessionOut.model_validate(session, from_attributes=True) for session in sessions]
 
 @router.put("/{session_id}", response_model=StudySessionOut)
