@@ -6,13 +6,13 @@ export const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const token = getToken();
 
 // Utility function
-async function request(path: string, options: RequestInit) {
+async function request(path: string, options: RequestInit, token?: string) {
     try {
         const res = await fetch(`${BASE_URL}${path}`, {
             ...options,
             headers: {
                 "Content-Type": "application/json",
-                ...(token ? { Authorization: `Bearer ${token}` } : undefined),
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 ...(options.headers || {}),
             }
         });
@@ -45,3 +45,6 @@ export function apiRegister(payload: { email: string; password: string }) {
 }
 
 // add API endpoints for notes and flashcard
+export function getNotes(token?: string) {
+    return request("/notes/", { cache: 'no-store' }, token);
+}
