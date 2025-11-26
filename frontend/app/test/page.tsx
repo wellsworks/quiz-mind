@@ -1,12 +1,27 @@
 'use client';
 
 import { getNotes, createNote, getFlashcards } from "@/lib/api";
-import React, { useState } from "react";
+import { useState } from "react";
+import NotesList from "@/components/NotesList";
 
 export default function TestPage() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [error, setError] = useState("");
+
+    const testNotes = [ 
+        {
+            id: "1001",
+            title: "The joys of Calculus",
+            content: "I couldn't think of a joke that wasn't derivative"
+        },
+        {
+            id: "10002",
+            title: "Information Security",
+            content: "It's more like a suggestion, amirite"
+        },
+    ];
+
 
     async function test() {
         const token = prompt("Enter token:");
@@ -48,6 +63,7 @@ export default function TestPage() {
             <button onClick={test}>
                 Test getFlashcards
             </button>
+            <NotesList notes={testNotes} onSelect={(id) => alert(id)}/>
         </form>
     );
 }
