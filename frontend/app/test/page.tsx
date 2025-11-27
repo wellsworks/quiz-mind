@@ -3,6 +3,7 @@
 import { getNotes, createNote, getFlashcards } from "@/lib/api";
 import { useState } from "react";
 import NotesList from "@/components/NotesList";
+import { NoteCreateForm } from "@/components/NoteCreateForm";
 
 export default function TestPage() {
     const [title, setTitle] = useState("");
@@ -28,42 +29,21 @@ export default function TestPage() {
         const flashcards = await getFlashcards(token!);
         console.log(flashcards);
     }
-    async function handleCreateNote(e: React.FormEvent) {
-        e.preventDefault();
-        setError("");
+    const handleCreateNote = (data: { title: string; content: string }) => {
+        const newNote = {
+            id: 11111,
+            title: data.title,
+            content: data.content,
+        };
 
-        const token = prompt("Enter token:");
-        const result = await createNote({ title, content }, token!);
-        console.log(result);
-    }
+        console.log("NOTE CREATED:", newNote);
+
+    };
 
     return (
-        <form onSubmit={handleCreateNote} className="flex flex-col gap-4 w-80">
-            <h2 className="text-2xl font-bold mb-2">Create A Note</h2>
-
-            <input
-                className="border rounded p-2"
-                placeholder="Note Title"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-            />
-
-            <input
-                className="border rounded p-2"
-                placeholder="Content"
-                value={content}
-                onChange={e => setContent(e.target.value)}
-            />
-
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-
-            <button className="bg-blue-600 text-white rounded p-2" type="submit">
-                Create Note
-            </button>
-            <button onClick={test}>
-                Test getFlashcards
-            </button>
+        <div className="flex flex-col gap-4 w-80">
+            <NoteCreateForm onCreate={handleCreateNote}/>
             <NotesList notes={testNotes} onSelect={(id) => alert(id)}/>
-        </form>
+        </div>
     );
 }
