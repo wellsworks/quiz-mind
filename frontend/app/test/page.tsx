@@ -5,6 +5,7 @@ import { useState } from "react";
 import NotesList from "@/components/NotesList";
 import { NoteCreateForm } from "@/components/NoteCreateForm";
 import { FlashcardList } from "@/components/FlashcardsList";
+import { FlashcardCreateForm } from "@/components/FlashcardCreateForm";
 
 export default function TestPage() {
     const [title, setTitle] = useState("");
@@ -54,10 +55,21 @@ export default function TestPage() {
 
     };
 
+    const handleCreateFlashcard = (data: { question: string; answer: string }) => {
+        const newFlashcard = {
+            id: 2222,
+            question: data.question,
+            answer: data.answer,
+        };
+
+        console.log("FLASHCARD CREATED:", newFlashcard);
+    }
+
     return (
         <div className="flex flex-col gap-4 w-80">
             <NoteCreateForm onCreate={handleCreateNote}/>
             <NotesList notes={testNotes} onSelect={(id) => alert(id)}/>
+            <FlashcardCreateForm onCreate={handleCreateFlashcard}/>
             <FlashcardList flashcards={testFlashcards} onSelect={(id) => alert(id)}/>
         </div>
     );
