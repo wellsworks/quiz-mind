@@ -4,6 +4,7 @@ import { getNotes, createNote, getFlashcards } from "@/lib/api";
 import { useState } from "react";
 import NotesList from "@/components/NotesList";
 import { NoteCreateForm } from "@/components/NoteCreateForm";
+import { FlashcardList } from "@/components/FlashcardsList";
 
 export default function TestPage() {
     const [title, setTitle] = useState("");
@@ -22,6 +23,19 @@ export default function TestPage() {
             content: "It's more like a suggestion, amirite"
         },
     ];
+
+    const testFlashcards = [
+        {
+            id: "200",
+            question: "What is the value of pi?",
+            answer: "Usually about $10, but in this economy, who knows?"
+        },
+        {
+            id: "300",
+            question: "How far away is the moon?",
+            answer: "Not that far"
+        }
+    ]
 
 
     async function test() {
@@ -44,6 +58,7 @@ export default function TestPage() {
         <div className="flex flex-col gap-4 w-80">
             <NoteCreateForm onCreate={handleCreateNote}/>
             <NotesList notes={testNotes} onSelect={(id) => alert(id)}/>
+            <FlashcardList flashcards={testFlashcards} onSelect={(id) => alert(id)}/>
         </div>
     );
 }
