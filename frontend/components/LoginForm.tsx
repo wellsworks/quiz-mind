@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiLogin } from "@/lib/api";
+import { saveToken } from "@/lib/auth";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -17,6 +18,7 @@ export default function LoginForm() {
         const result = await apiLogin({ email, password });
 
         if (result.ok) {
+            saveToken(result.data.access_token); //change to HTTPOnly cookies later
             router.push("/dashboard");
             return;
         }

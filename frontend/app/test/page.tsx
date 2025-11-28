@@ -6,8 +6,22 @@ import NotesList from "@/components/NotesList";
 import { NoteCreateForm } from "@/components/NoteCreateForm";
 import { FlashcardList } from "@/components/FlashcardsList";
 import { FlashcardCreateForm } from "@/components/FlashcardCreateForm";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { saveToken, clearToken, isLoggedIn } from "@/lib/auth";
 
 export default function TestPage() {
+    const [authState, setAuthState] = useState(isLoggedIn());
+
+    const fakeLogin = () => {
+        saveToken("test-token");
+        setAuthState(true);
+    };
+
+    const fakeLogout = () => {
+        clearToken();
+        setAuthState(false);
+    }
+
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [error, setError] = useState("");
@@ -67,10 +81,28 @@ export default function TestPage() {
 
     return (
         <div className="flex flex-col gap-4 w-80">
+            <p>Logged in? {authState ? " Yes " : " No " }</p>
+            <button
+                className="px-4 py-2 rounded bg-blue-600 text-white"
+                onClick={fakeLogin}
+            >
+                Fake Login
+            </button>
+            <button 
+                className="px-4 py-2 rounded bg-red-600 text-white"
+                onClick={fakeLogout}
+            >
+                Fake Logout
+            </button>
+
             <NoteCreateForm onCreate={handleCreateNote}/>
-            <NotesList notes={testNotes} onSelect={(id) => alert(id)}/>
+            <ProtectedRoute>
+                <NotesList notes={testNotes} onSelect={(id) => alert(id)}/>
+            </ProtectedRoute>
             <FlashcardCreateForm onCreate={handleCreateFlashcard}/>
-            <FlashcardList flashcards={testFlashcards} onSelect={(id) => alert(id)}/>
+            <ProtectedRoute>
+                <FlashcardList flashcards={testFlashcards} onSelect={(id) => alert(id)}/>
+            </ProtectedRoute>
         </div>
     );
 }
