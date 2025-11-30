@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiLogin } from "@/lib/api";
 import { saveToken } from "@/lib/auth";
+import { useMutation } from "@tanstack/react-query";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -11,19 +12,25 @@ export default function LoginForm() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    async function handleSubmit(e: React.FormEvent) {
+    const loginMutation = useMutation({
+        mutationFn: (payload: { email: string; password: string }) =>
+            apiLogin(payload),
+
+        onSuccess: (data) => {
+            saveToken(data.access_token);
+            router.push("/dashboard");
+        },
+
+        onError: (err: any) => {
+            setError(err.message || "Login failed");
+        },
+    });
+
+    function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");
 
-        const result = await apiLogin({ email, password });
-
-        if (result.ok) {
-            saveToken(result.data.access_token); //change to HTTPOnly cookies later
-            router.push("/dashboard");
-            return;
-        }
-
-        setError(result.error || "Login failed");
+        loginMutation.mutate({ email, password });
     }
 
     return (
