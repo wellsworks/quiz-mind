@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiRegister } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -11,19 +12,24 @@ export default function RegisterForm() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    async function handleSubmit(e: React.FormEvent) {
+    const registerMutation = useMutation({
+        mutationFn: (payload: { email: string; password: string }) =>
+            apiRegister(payload),
+
+        onSuccess: (data) => {
+            router.push("/login");
+        },
+
+        onError: (err: any) => {
+            setError(err.message || "Registration failed")
+        },
+    });
+
+    function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
 
-        //add form validation
-        const result = await apiRegister({ email, password });
-
-        if (result.ok) {
-            router.push("/login");
-            return;
-        }
-
-        setError(result.error || "Registration failed");
+        registerMutation.mutate({ email, password });
     }
 
     return (
