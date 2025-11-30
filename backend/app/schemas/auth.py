@@ -9,3 +9,6 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     sub: Optional[str] = None # user id as string (subject)
+
+class LoginSuccess(BaseModel):
+    success: bool
