@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { isLoggedIn } from "@/lib/auth";
+import { useQuery } from "@tanstack/react-query";
+import { getCurrentUser } from "@/lib/api";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -10,19 +11,27 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
     const router = useRouter();
-    const [auth, setAuth] = useState(isLoggedIn());
+
+    const { data: user, isLoading, isError } = useQuery({
+        queryKey: ["currentUser"],
+        queryFn: getCurrentUser,
+        retry: false,
+    });
 
     useEffect(() => {
-        if (!auth) {
+        if (isLoading) return;
+        if (isError || !user) {
             router.push("/login");
         }
-    }, [auth, router]);
+    }, [isLoading, isError, user, router]);
 
-    useEffect(() => {
-        if (!isLoggedIn()) {
-            router.push("/login");
-        }
-    },);
+    if (isLoading) {
+        return <p>Loading...</p>;
+    }
 
-    return <>{auth && children}</>;
+    if (isError || !user) {
+        return null;
+    }
+
+    return <>{children}</>;
 }

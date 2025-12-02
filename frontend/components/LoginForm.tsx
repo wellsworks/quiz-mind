@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiLogin } from "@/lib/api";
-import { saveToken } from "@/lib/auth";
 import { useMutation } from "@tanstack/react-query";
 
 export default function LoginForm() {
@@ -16,8 +15,7 @@ export default function LoginForm() {
         mutationFn: (payload: { email: string; password: string }) =>
             apiLogin(payload),
 
-        onSuccess: (data) => {
-            saveToken(data.access_token);
+        onSuccess: () => {
             router.push("/dashboard");
         },
 

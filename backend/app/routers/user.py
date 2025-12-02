@@ -9,6 +9,10 @@ from app.deps import get_current_user
 
 router = APIRouter(prefix="/users", tags=["users"])
 
+@router.get("/me", response_model=UserOut)
+def read_current_user(current_user: User = Depends(get_current_user)):
+    return UserOut.model_validate(current_user, from_attributes=True)
+
 @router.post("/", response_model=UserOut)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
@@ -64,8 +68,3 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.delete(db_user)
     db.commit()
     return {"detail": "User deleted"}
-
-@router.get("/me", response_model=UserOut)
-def read_current_user(current_user: User = Depends(get_current_user)):
-    return UserOut.model_validate(current_user, from_attributes=True)
-

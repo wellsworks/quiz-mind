@@ -16,7 +16,7 @@ export default function RegisterForm() {
         mutationFn: (payload: { email: string; password: string }) =>
             apiRegister(payload),
 
-        onSuccess: (data) => {
+        onSuccess: () => {
             router.push("/login");
         },
 
@@ -38,6 +38,7 @@ export default function RegisterForm() {
 
             <input
                 className="border rounded p-2"
+                type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

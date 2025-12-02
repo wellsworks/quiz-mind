@@ -1,25 +1,24 @@
 'use client';
 
-import { getNotes, createNote, getFlashcards } from "@/lib/api";
+import { getNotes, createNote, getFlashcards, apiLogout } from "@/lib/api";
 import { useState } from "react";
 import NotesList from "@/components/NotesList";
 import { NoteCreateForm } from "@/components/NoteCreateForm";
 import { FlashcardList } from "@/components/FlashcardsList";
 import { FlashcardCreateForm } from "@/components/FlashcardCreateForm";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { saveToken, clearToken, isLoggedIn } from "@/lib/auth";
+import { useQuery } from "@tanstack/react-query";
+import { getCurrentUser } from "@/lib/api";
 
 export default function TestPage() {
-    const [authState, setAuthState] = useState(isLoggedIn());
-
-    const fakeLogin = () => {
-        saveToken("test-token");
-        setAuthState(true);
-    };
+    const { data: user, isLoading, isError } = useQuery({
+        queryKey: ["currentUser"],
+        queryFn: getCurrentUser,
+        retry: false,
+    });
 
     const fakeLogout = () => {
-        clearToken();
-        setAuthState(false);
+        apiLogout();
     }
 
     const [title, setTitle] = useState("");
@@ -55,7 +54,7 @@ export default function TestPage() {
 
     async function test() {
         const token = prompt("Enter token:");
-        const flashcards = await getFlashcards(token!);
+        const flashcards = await getFlashcards();
         console.log(flashcards);
     }
     const handleCreateNote = (data: { title: string; content: string }) => {
@@ -81,13 +80,7 @@ export default function TestPage() {
 
     return (
         <div className="flex flex-col gap-4 w-80">
-            <p>Logged in? {authState ? " Yes " : " No " }</p>
-            <button
-                className="px-4 py-2 rounded bg-blue-600 text-white"
-                onClick={fakeLogin}
-            >
-                Fake Login
-            </button>
+            <p>Logged in? {user ? " Yes " : " No " }</p>
             <button 
                 className="px-4 py-2 rounded bg-red-600 text-white"
                 onClick={fakeLogout}
