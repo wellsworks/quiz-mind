@@ -37,6 +37,9 @@ export default function LoginForm() {
 
             <input
                 className="border rounded p-2"
+                type="email"
+                name="email"
+                autoComplete="email"
                 placeholder="Email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -45,6 +48,8 @@ export default function LoginForm() {
             <input
                 className="border rounded p-2"
                 type="password"
+                name="password"
+                autoComplete="password"
                 placeholder="Password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}

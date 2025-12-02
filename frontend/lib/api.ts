@@ -19,13 +19,19 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     let data: any = null;
     try {
         data = await res.json();
-    } catch {}
-
-    if (!res.ok) {
-        throw new Error(data?.detail || "Request failed");
+    } catch {
+        data = null;
     }
 
-    return data;
+    if (!res.ok) {
+        throw new Error(
+            data?.detail ||
+            data?.error || 
+            "Request failed"
+        );
+    }
+
+    return (data ?? {}) as T;
 }
 
 // Auth Endpoints
@@ -44,11 +50,11 @@ export function apiRegister(payload: { email: string; password: string }) {
 }
 
 export function getCurrentUser() {
-    request("/users/me", { method: "GET" });
+    return request("/users/me", { method: "GET" });
 }
 
 export function apiLogout() {
-    request("/auth/logout", { method: "POST" });
+    return request("/auth/logout", { method: "POST" });
 }
 
 // add API endpoints for notes and flashcard
