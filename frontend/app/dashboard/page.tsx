@@ -1,13 +1,14 @@
 //connect to backend to fetch user notes/flashcards
 
-import { cookies } from "next/headers";
 import Link from "next/link";
+import  getCurrentUserSSR  from "@/lib/server-auth";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
-    const cookieStore = cookies();
-    const token = (await cookieStore).get("access_token");
+    const user = await getCurrentUserSSR();
 
-    // redirect to login if 'token' is missing
+    if (!user) redirect("/login");
+
     // call backend with fetch to retrieve dashboard data
 
     return (
@@ -16,6 +17,7 @@ export default async function DashboardPage() {
 
             // replace placeholders with real components 
             <section className="space-y-4">
+                <p>Logged in as: {user.email}</p>
                 <p>Welcome back! Here is your study data:</p>
 
                 <div className="flex gap-4">
