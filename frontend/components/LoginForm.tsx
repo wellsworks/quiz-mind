@@ -28,6 +28,11 @@ export default function LoginForm() {
         e.preventDefault();
         setError("");
 
+        if (!email || !password) {
+            setError("Email and password are required");
+            return;
+        }
+
         loginMutation.mutate({ email, password });
     }
 
@@ -42,7 +47,7 @@ export default function LoginForm() {
                 autoComplete="email"
                 placeholder="Email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onInput={e => setEmail(e.target.value)}
             />
 
             <input
@@ -52,7 +57,7 @@ export default function LoginForm() {
                 autoComplete="password"
                 placeholder="Password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onInput={e => setPassword(e.target.value)}
             />
 
             {error && <p className="text-red-500 text-sm">{error}</p>}
