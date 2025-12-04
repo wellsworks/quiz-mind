@@ -1,16 +1,42 @@
+import { log } from "console";
 import { NextResponse, NextRequest } from "next/server";
 
-const protectedRoutes = ['/dashboard', '/notes/', '/flashcards/']
-const publicRoutes = ['/login', '/register', '/']
+const protectedPrefixes = [
+    '/dashboard', 
+    '/notes', 
+    '/flashcards', 
+    '/test', 
+    '/test-ssr'
+];
+
+const publicPrefixes = [
+    '/login', 
+    '/register', 
+    '/'
+];
 
 export default function proxy(req: NextRequest) {
     const cookie = req.cookies.get("access_token");
-    const path = req.nextUrl.pathname
-    const isProtectedRoute = protectedRoutes.includes(path)
-    const isPublicRoute = publicRoutes.includes(path)
+    const { pathname } = req.nextUrl;
 
-    if (isProtectedRoute && !cookie) {
-        return NextResponse.redirect(new URL('/login', req.nextUrl))
+    const isProtected = protectedPrefixes.some(prefix => 
+        pathname.startsWith(prefix)
+    );
+
+    const isPublic = publicPrefixes.some(prefix => 
+        pathname === prefix
+    );
+
+    // User is not loggen in -> redirect to login
+    if (isProtected && !cookie) {
+        const loginUrl = new URL('/login', req.url);
+        return NextResponse.redirect(loginUrl);
+    }
+
+    // User is logged in and tries to access login/register -> redirect to dashboard
+    if (cookie && isPublic) {
+        const dashboardUrl = new URL('/dashboard', req.url);
+        return NextResponse.redirect(dashboardUrl);
     }
 
     return NextResponse.next();
@@ -22,5 +48,6 @@ export const config = {
         '/notes/:path*',
         '/flashcards/:path*',
         '/test',
+        '/test-ssr',
     ],
 };
