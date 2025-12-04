@@ -57,15 +57,20 @@ export function apiLogout() {
     return request("/auth/logout", { method: "POST" });
 }
 
-// add API endpoints for notes and flashcard
+// ---- NOTES API FUNCTIONS -----
 export function getNotes() {
     return request("/notes/", { method: "GET", cache: 'no-store' });
+}
+
+export async function getNoteById(id: string) {
+    return request(`/notes/${id}`, { method: "GET" });
 }
 
 export async function createNote(payload: { title: string; content: string }) {
     return request("/notes/", { method: "POST", body: JSON.stringify(payload) })
 }
 
+// ------ FLASHCARDS API FUNCTIONS ------
 export async function getFlashcards() {
     return request("/flashcards/", { method: "GET", cache: 'no-store' });
 }
