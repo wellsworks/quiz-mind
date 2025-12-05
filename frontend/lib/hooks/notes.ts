@@ -25,3 +25,14 @@ export function useNoteById(id: string) {
         enabled: !!id,
     });
 }
+
+export function useCreateNote() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: createNote,
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: NOTES_KEY });
+        },
+    });
+}
