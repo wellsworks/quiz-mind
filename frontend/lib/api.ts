@@ -98,3 +98,10 @@ export async function createFlashcard(payload: { question: string; answer: strin
         body: JSON.stringify(payload),
     });
 }
+
+export async function updateFlashcard(id: string, payload: any) {
+    return request(`/flashcards/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(payload)
+    })
+}
