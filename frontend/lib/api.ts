@@ -105,3 +105,9 @@ export async function updateFlashcard(id: string, payload: any) {
         body: JSON.stringify(payload)
     })
 }
+
+export async function deleteFlashcard(id: string) {
+    return request(`/flashcards/${id}`, {
+        method: "DELETE",
+    });
+}
