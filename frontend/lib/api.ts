@@ -87,3 +87,7 @@ export async function deleteNote(id: string) {
 export async function getFlashcards() {
     return request("/flashcards/", { method: "GET", cache: 'no-store' });
 }
+
+export async function getFlashcardById(id: string) {
+    return request(`/flashcards/${id}`, { method: "GET" });
+}
