@@ -77,6 +77,12 @@ export async function updateNote(id: string, payload: any) {
     });
 }
 
+export async function deleteNote(id: string) {
+    return request(`/notes/${id}`, {
+        method: "DELETE",
+    });
+}
+
 // ------ FLASHCARDS API FUNCTIONS ------
 export async function getFlashcards() {
     return request("/flashcards/", { method: "GET", cache: 'no-store' });
