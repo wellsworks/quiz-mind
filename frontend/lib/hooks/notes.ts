@@ -17,3 +17,11 @@ export function useNotes() {
         queryFn: getNotes,
     });
 }
+
+export function useNoteById(id: string) {
+    return useQuery({
+        queryKey: [...NOTES_KEY, id],
+        queryFn: () => getNoteById(id),
+        enabled: !!id,
+    });
+}
