@@ -17,3 +17,11 @@ export function useFlashcards() {
         queryFn: getFlashcards,
     });
 }
+
+export function useFlashcardById(id: string) {
+    return useQuery({
+        queryKey: [...FLASH_KEY, id],
+        queryFn: () => getFlashcardById(id),
+        enabled: !!id,
+    });
+}
