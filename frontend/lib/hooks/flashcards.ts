@@ -25,3 +25,14 @@ export function useFlashcardById(id: string) {
         enabled: !!id,
     });
 }
+
+export function useCreateFlashcard() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: createFlashcard,
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: FLASH_KEY });
+        },
+    });
+}
