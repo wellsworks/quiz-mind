@@ -36,3 +36,18 @@ export function useCreateFlashcard() {
         },
     });
 }
+
+export function useUpdateFlashcard() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: updateFlashcard,
+        onSuccess: (updated) => {
+            qc.invalidateQueries({ queryKey: FLASH_KEY });
+
+            if (updated?.id) {
+                qc.invalidateQueries({ queryKey: [...FLASH_KEY, updated.id]})
+            }
+        }
+    })
+}
