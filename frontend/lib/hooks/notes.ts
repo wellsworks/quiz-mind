@@ -51,3 +51,15 @@ export function useUpdateNote() {
         },
     });
 }
+
+export function useDeleteNote() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: deleteNote,
+        onSuccess: (_, id) => {
+            qc.invalidateQueries({ queryKey: NOTES_KEY });
+            qc.invalidateQueries({ queryKey: [...NOTES_KEY, id] });
+        },
+    });
+}
