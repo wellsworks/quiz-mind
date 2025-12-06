@@ -51,3 +51,15 @@ export function useUpdateFlashcard() {
         }
     })
 }
+
+export function useDeleteFlashcard() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: deleteFlashcard,
+        onSuccess: (_, id) => {
+            qc.invalidateQueries({ queryKey: FLASH_KEY });
+            qc.invalidateQueries({ queryKey: [...FLASH_KEY, id] });
+        },
+    });
+}
