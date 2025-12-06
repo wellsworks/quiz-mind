@@ -70,7 +70,7 @@ export async function createNote(payload: { title: string; content: string }) {
     return request("/notes/", { method: "POST", body: JSON.stringify(payload) })
 }
 
-export async function updateNote(id: string, payload: any) {
+export async function updateNote({ id, payload }: { id: string; payload: any; }) {
     return request(`/notes/${id}`, {
         method: "PUT",
         body: JSON.stringify(payload),

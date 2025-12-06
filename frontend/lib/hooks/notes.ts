@@ -36,3 +36,18 @@ export function useCreateNote() {
         },
     });
 }
+
+export function useUpdateNote() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: updateNote,
+        onSuccess: (updated) => {
+            qc.invalidateQueries({ queryKey: NOTES_KEY });
+
+            if (updated?.id) {
+                qc.invalidateQueries({ queryKey: [...NOTES_KEY, updated.id]});
+            }
+        },
+    });
+}
