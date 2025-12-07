@@ -22,7 +22,11 @@ async function serverFetch(path: string, options: RequestInit = {}) {
 
     if (!res.ok) {
         const error = await res.json().catch(() => ({}));
-        throw new Error(error?.detail || `Request to ${path} failed with status ${res.status}`
+        const detail = 
+            Array.isArray(error?.detail)
+            ? JSON.stringify(error.detail)
+            : error?.detail;
+        throw new Error(detail || `Request to ${path} failed with status ${res.status}`
         );
     }
 
