@@ -1,25 +1,43 @@
+"use client";
+
 import { useState } from "react";
-
-interface FlashcardCreateFormProps {
-    onCreate: (data: { question: string; answer: string }) => void;
-}
+import { useCreateFlashcard } from "@/lib/hooks/flashcards";
 
 
-export function FlashcardCreateForm({ onCreate }: FlashcardCreateFormProps) {
+export function FlashcardCreateForm() {
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
+    const [noteId, setNoteId] = useState("");
+    const source = "user_created";
+    const createFlashcard = useCreateFlashcard();
 
 
-    const handleSubmit = (e: React.FormEvent) => {
+    function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        onCreate({ question, answer });
-        setQuestion("");
-        setAnswer("");
+        createFlashcard.mutate({ 
+            question, 
+            answer, 
+            note_id: Number(noteId), 
+            source,
+        },
+        {
+            onSuccess: () => {
+                setQuestion("");
+                setAnswer("");
+                setNoteId("");
+            },
+        });
     };
 
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-xl">
+            <input
+                className="border p-2 w-full rounded-lg"
+                placeholder="Note ID"
+                value={noteId}
+                onChange={(e) => setNoteId(e.target.value)}
+            />
             <input
                 type="text"
                 placeholder="Question"
