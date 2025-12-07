@@ -1,24 +1,32 @@
-interface Flashcard {
-    id: string;
-    question: string;
-    answer: string;
-}
+"use client";
 
-interface FlashcardsListProps {
-    flashcards: Flashcard[];
-    onSelect: (id: string) => void;
-}
+import { useFlashcards } from "@/lib/hooks/flashcards";
+import Link from "next/link";
 
-export function FlashcardList({ flashcards, onSelect }: FlashcardsListProps) {
+export default function FlashcardList() {
+    const { data, isLoading, isError } = useFlashcards();
+
+    if (isLoading) return <p>Loading flashcards...</p>;
+    if (isError) return <p>Error loading flashcards.</p>;
+
+    const flashcards = data || [];
+
     return (
         <div className="grid grid-cols-2 gap-4">
-            {flashcards.map((card) => (
+            {flashcards.length === 0 && <p>No flashcards yet.</p>}
+
+            {flashcards.map((card: any) => (
                 <div
                     key={card.id}
                     className="p-4 border rounded-xl hover:bg-gray-50 cursor-pointer"
-                    onClick={() => onSelect(card.id)}
                 >
-                    <p className="font-semibold">{card.question}</p>
+                    <h2 className="text-lg font-semibold">{card.question}</h2>
+                    <p className="text-sm text-gray-600 line-clamp-2">{card.answer}</p>
+                    <div className="mt-3 flex gap-3">
+                        <Link href={`/flashcards/${card.id}`} className="text-blue-600 underline">
+                            View
+                        </Link>
+                    </div>
                 </div>
             ))}
         </div>
