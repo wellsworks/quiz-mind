@@ -22,7 +22,7 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
             </div>
 
             <section>
-                <NoteEditForm />
+                <NoteEditForm initialData={note}/>
             </section>
 
             <div>

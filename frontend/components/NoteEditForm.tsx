@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { useUpdateNote } from "@/lib/hooks/notes";
 
-export default function NoteEditForm() {
-    const [id, setId] = useState("");
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+export default function NoteEditForm({ initialData }: { initialData?: { id: number; title: string; content: string }}) {
+    const [id, setId] = useState(initialData ? String(initialData.id) : "");
+    const [title, setTitle] = useState(initialData ? initialData.title : "");
+    const [content, setContent] = useState(initialData ? initialData.content : "");
 
     const editNote = useUpdateNote();
 
@@ -20,13 +20,6 @@ export default function NoteEditForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-            <input
-                className="border p-2 w-full rounded"
-                placeholder="Note ID"
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-            />
-
             <input
                 className="border p-2 w-full rounded"
                 placeholder="Note title"
