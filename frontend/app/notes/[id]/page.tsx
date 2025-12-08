@@ -1,6 +1,6 @@
 import { getNoteByIdServer } from "@/lib/api-server";
 import NoteEditForm from "@/components/NoteEditForm";
-
+import Link from "next/link";
 
 export default async function NoteDetailPage(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;
@@ -24,6 +24,10 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
             <section>
                 <NoteEditForm />
             </section>
+
+            <Link href="/notes" className="text-blue-600 underline">
+                Back to Notes
+            </Link>
         </main>
     );
 }
