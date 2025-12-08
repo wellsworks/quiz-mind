@@ -25,9 +25,17 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
                 <NoteEditForm />
             </section>
 
-            <Link href="/notes" className="text-blue-600 underline">
-                Back to Notes
-            </Link>
+            <div>
+                <Link href={`/notes/${noteId}/flashcards`} className="text-blue-600 underline">
+                    View Flashcards for this Note
+                </Link>
+            </div>
+
+            <div>
+                <Link href="/notes" className="text-blue-600 underline">
+                    Back to Notes
+                </Link>
+            </div>
         </main>
     );
 }
