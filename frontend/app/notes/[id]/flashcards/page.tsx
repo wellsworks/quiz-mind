@@ -1,9 +1,17 @@
-import { FlashcardList } from "@/components/FlashcardsList";
+import  FlashcardList  from "@/components/FlashcardsList";
 import { FlashcardCreateForm } from "@/components/FlashcardCreateForm";
 import getCurrentUserSSR from "@/lib/server-auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
-export default async function FlashcardsPage() {
+export default async function FlashcardsPage(props: { params: Promise<{ id: string }> }) {
+    const { id } = await props.params;
+
+    const noteId  = Number(id);
+    if (Number.isNaN(noteId)) {
+        throw new Error(`Invalid note id: ${id}`);
+    }
+
     const user = await getCurrentUserSSR();
         
     if (!user) redirect("/login");
@@ -13,12 +21,18 @@ export default async function FlashcardsPage() {
             <h1 className="text-3xl font-bold">Your Flashcards</h1>
 
             <section className="max-w-lg">
-                <p>FlashcardCreateForm</p>
+                <FlashcardCreateForm />
             </section>
 
             <section className="mt-8">
-                <p>FlashcardsList</p>
+                <FlashcardList />
             </section>
+
+            <div>
+                <Link href={`/notes/${noteId}`} className="text-blue-600 underline">
+                    Back to Note
+                </Link>
+            </div>
         </main>
     );
 }
