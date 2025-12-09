@@ -25,7 +25,7 @@ export default async function FlashcardsPage(props: { params: Promise<{ id: stri
             </section>
 
             <section className="mt-8">
-                <FlashcardList />
+                <FlashcardList noteId={noteId}/>
             </section>
 
             <div>
