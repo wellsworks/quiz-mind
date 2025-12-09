@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useCreateFlashcard } from "@/lib/hooks/flashcards";
 
 
-export function FlashcardCreateForm() {
+export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
-    const [noteId, setNoteId] = useState("");
+    const [noteId, setNoteId] = useState(note_id ? (note_id) : "");
     const source = "user_created";
     const createFlashcard = useCreateFlashcard();
 
@@ -32,12 +32,6 @@ export function FlashcardCreateForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-xl">
-            <input
-                className="border p-2 w-full rounded-lg"
-                placeholder="Note ID"
-                value={noteId}
-                onChange={(e) => setNoteId(e.target.value)}
-            />
             <input
                 type="text"
                 placeholder="Question"
