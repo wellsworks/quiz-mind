@@ -51,5 +51,5 @@ export async function getFlashcardByIdServer(id: string | number) {
 }
 
 export async function getFlashcardsByNoteIdServer(noteId: string | number) {
-    return serverFetch(`/notes/${noteId}/flashcards/`, { method: "GET" });
+    return serverFetch(`/notes/${noteId}/flashcards`, { method: "GET" });
 }
