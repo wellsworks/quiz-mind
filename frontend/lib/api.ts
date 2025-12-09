@@ -92,6 +92,10 @@ export async function getFlashcardById(id: string) {
     return request(`/flashcards/${id}`, { method: "GET" });
 }
 
+export async function getFlashcardsByNoteId(noteId: string) {
+    return request(`/notes/${noteId}/flashcards`, { method: "GET" });
+}
+
 export async function createFlashcard(payload: { question: string; answer: string; note_id: number; source: string }) {
     return request("/flashcards/", {
         method: "POST",

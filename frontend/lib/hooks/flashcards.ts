@@ -3,7 +3,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     getFlashcards,
-    getFlashcardById, 
+    getFlashcardById,
+    getFlashcardsByNoteId, 
     createFlashcard,
     updateFlashcard,
     deleteFlashcard,
@@ -23,6 +24,14 @@ export function useFlashcardById(id: string) {
         queryKey: [...FLASH_KEY, id],
         queryFn: () => getFlashcardById(id),
         enabled: !!id,
+    });
+}
+
+export function useFlashcardsByNoteId(noteId: string) {
+    return useQuery({
+        queryKey: [...FLASH_KEY, noteId],
+        queryFn: () => getFlashcardsByNoteId(noteId),
+        enabled: !!noteId,
     });
 }
 
