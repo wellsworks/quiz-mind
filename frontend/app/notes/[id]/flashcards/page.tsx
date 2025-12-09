@@ -21,7 +21,7 @@ export default async function FlashcardsPage(props: { params: Promise<{ id: stri
             <h1 className="text-3xl font-bold">Your Flashcards</h1>
 
             <section className="max-w-lg">
-                <FlashcardCreateForm />
+                <FlashcardCreateForm note_id={noteId}/>
             </section>
 
             <section className="mt-8">
