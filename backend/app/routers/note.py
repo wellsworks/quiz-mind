@@ -7,6 +7,8 @@ from app.schemas.note import NoteCreate, NoteOut, NoteUpdate
 from app.models.note import Note
 from app.models.user import User
 from app.deps import get_current_user
+from app.schemas.flashcard import FlashcardOut
+from app.models.flashcard import Flashcard
 
 router = APIRouter(prefix="/notes", tags=["notes"])
 
@@ -71,3 +73,12 @@ def delete_note(note_id: int, db: Session = Depends(get_db), current_user: User 
     db.commit()
     return {"detail": "Note deleted"}
 
+@router.get("/{note_id}/flashcards", response_model=list[FlashcardOut])
+def list_flashcards_for_note(note_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    db_note = db.query(Note).filter(Note.id == note_id).first()
+    if not db_note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    if db_note.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access flashcards for this note")
+    flashcards = db.query(Flashcard).filter(Flashcard.note_id == note_id).all()
+    return [FlashcardOut.model_validate(fc, from_attributes=True) for fc in flashcards]
