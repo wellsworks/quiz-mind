@@ -1,10 +1,11 @@
 "use client";
 
-import { useFlashcards } from "@/lib/hooks/flashcards";
+import { useFlashcardsByNoteId } from "@/lib/hooks/flashcards";
 import Link from "next/link";
 
-export default function FlashcardList() {
-    const { data, isLoading, isError } = useFlashcards();
+export default function FlashcardList({ noteId }: { noteId: number }) {
+    const id = String(noteId);
+    const { data, isLoading, isError } = useFlashcardsByNoteId(id);
 
     if (isLoading) return <p>Loading flashcards...</p>;
     if (isError) return <p>Error loading flashcards.</p>;
