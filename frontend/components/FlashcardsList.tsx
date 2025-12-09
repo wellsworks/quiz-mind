@@ -24,7 +24,7 @@ export default function FlashcardList({ noteId }: { noteId: number }) {
                     <h2 className="text-lg font-semibold">{card.question}</h2>
                     <p className="text-sm text-gray-600 line-clamp-2">{card.answer}</p>
                     <div className="mt-3 flex gap-3">
-                        <Link href={`/flashcards/${card.id}`} className="text-blue-600 underline">
+                        <Link href={`/notes/${noteId}/flashcards/${card.id}`} className="text-blue-600 underline">
                             View
                         </Link>
                     </div>
