@@ -3,18 +3,18 @@
 import { useState } from "react";
 import { useUpdateFlashcard } from "@/lib/hooks/flashcards";
 
-export default function FlashcardEditForm() {
-    const [id, setId] = useState("");
-    const [question, setQuestion] = useState("");
-    const [answer, setAnswer] = useState("");
-    const [noteId, setNoteId] = useState("");
+export default function FlashcardEditForm({ flashcardId, initialData }: { flashcardId: number; initialData?: { question: string; answer: string; note_id: number; source: string } }) {
+    const [id, setId] = useState(initialData ? String(flashcardId) : "");
+    const [question, setQuestion] = useState(initialData ? initialData.question : "");
+    const [answer, setAnswer] = useState(initialData ? initialData.answer : "");
+    const [note_id, setNoteId] = useState(initialData ? (initialData.note_id) : "");
     const source = "user_created"
 
     const editFlashcard = useUpdateFlashcard();
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        editFlashcard.mutate({id, payload: { answer, question, note_id: Number(noteId), source }});
+        editFlashcard.mutate({id, payload: { answer, question, note_id: Number(note_id), source }});
         setId("");
         setQuestion("");
         setAnswer("");
@@ -23,20 +23,6 @@ export default function FlashcardEditForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-            <input
-                className="border p-2 w-full rounded"
-                placeholder="Flashcard ID"
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-            />
-
-            <input
-                className="border p-2 w-full rounded"
-                placeholder="Note ID"
-                value={noteId}
-                onChange={(e) => setNoteId(e.target.value)}
-            />
-
             <input
                 className="border p-2 w-full rounded"
                 placeholder="Question"
