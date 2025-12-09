@@ -49,3 +49,7 @@ export async function getFlashcardsServer() {
 export async function getFlashcardByIdServer(id: string | number) {
     return serverFetch(`/flashcards/${id}`, { method: "GET" });
 }
+
+export async function getFlashcardsByNoteIdServer(noteId: string | number) {
+    return serverFetch(`/notes/${noteId}/flashcards/`, { method: "GET" });
+}
