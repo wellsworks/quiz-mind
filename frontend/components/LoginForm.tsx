@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiLogin } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/ui";
 
 export default function LoginForm() {
+    const setUser = useAuthStore((s) => s.setUser);
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -15,7 +17,8 @@ export default function LoginForm() {
         mutationFn: (payload: { email: string; password: string }) =>
             apiLogin(payload),
 
-        onSuccess: () => {
+        onSuccess: (user) => {
+            setUser(user);
             router.push("/dashboard");
         },
 
