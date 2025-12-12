@@ -1,21 +1,28 @@
+"use client";
+
 import Link from "next/link";
 
-export function Navbar() {
+export default function Navbar() {
     return (
-        <nav className="p-4 border-b flex items-center justify-between">
-            <Link href="/" className="font-bold text-lg">
-                Quiz Mind
-            </Link>
-            <div className="space-x-4">
-                <Link href="/dashboard" className="hover:underline">
-                    Dashboard
-                </Link>
-                <Link href="/notes" className="hover:underline">
-                    Notes
-                </Link>
-                <Link href="/flashcards" className="hover:underline">
-                    Flashcards
-                </Link>
+        <nav className="border-b bg-background/80 backdrop-blur">
+            <div className="container mx-auto flex items-center justify-between py-4 px-4">
+                <div className="flex items-center gap-6">
+                    <Link href="/" className="font-bold text-lg">
+                        Quiz Mind
+                    </Link>
+
+                <div className="hidden md:flex gap-4 text-sm">
+                    <Link href="/dashboard" className="hover:underline">
+                        Dashboard
+                    </Link>
+                </div>
+
+                <div className="hidden md:flex gap-4 text-sm">
+                    <Link href="/notes" className="hover:underline">
+                        Notes
+                    </Link>
+                </div>
+                </div>
             </div>
         </nav>
     );
