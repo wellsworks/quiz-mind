@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type Theme = "light" | "dark";
 
@@ -11,6 +12,12 @@ interface UIState {
     setTheme: (theme: Theme) => void;
     toggleTheme: () => void;
     setUser: (user: any | null) => void;
+}
+
+interface AuthState {
+    user: any | null;
+    setUser: (u: any | null) => void;
+    logout: () => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -34,3 +41,15 @@ export const useUIStore = create<UIState>((set) => ({
     setUser: (user) => set({ user }),
 }));
 
+export const useAuthStore = create<AuthState>()(
+    persist(
+        (set) => ({
+            user: null,
+            setUser: (user) => set({ user }),
+            logout: () => set({ user: null }),
+        }),
+        {
+            name: "auth-store",
+        }
+    )
+);
