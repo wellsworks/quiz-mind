@@ -1,8 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
-import { getCurrentUser } from "./api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getCurrentUser, apiLogout } from "./api";
+import { redirect } from "next/navigation";
 
 
-const { data: user, isLoading, isError } = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: getCurrentUser
-});
+export function useUser() {
+    return useQuery({
+        queryKey: ["currentUser"],
+        queryFn: getCurrentUser,
+    });
+}
+
+export function useLogout() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: apiLogout,
+        onSuccess: () => {
+            qc.clear();
+            redirect("/login")
+        },
+    });
+}
