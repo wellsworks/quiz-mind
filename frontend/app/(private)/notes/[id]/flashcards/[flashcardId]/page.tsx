@@ -2,7 +2,10 @@ import { getFlashcardByIdServer } from "@/lib/api-server";
 import FlashcardEditForm from "@/components/FlashcardEditForm";
 import FlashcardView from "@/components/FlashcardView";
 import Link from "next/link";
-
+import PageHeader from "@/components/PageHeader";
+import Section from "@/components/Section";
+import Container from "@/components/Container";
+import Button from "@/components/Button";
 
 export default async function FlashcardDetailPage(props: { params: Promise<{ id: string, flashcardId: string }> }) {
     const { id, flashcardId } = await props.params;
@@ -19,28 +22,33 @@ export default async function FlashcardDetailPage(props: { params: Promise<{ id:
     const fc = await getFlashcardByIdServer(flashcardIdNum);
 
     return (
-        <main className="p-6 space-y-4">
-            <h1 className="text-2xl font-bold">Flashcard Detail</h1>
+        <Container className="py-10 space-y-8">
+            <PageHeader 
+                title="Flashcard Details"
+                description="Edit and review this Flashcard"
+            />
 
-            <section>
+            <Section title="Flashcard Review">
                 <FlashcardView flashcard={fc} />
-            </section>
+            </Section>
 
-            <section>
+            <Section title="Edit this Flashcard">
                 <FlashcardEditForm flashcardId={flashcardIdNum} initialData={fc}/>
-            </section>
+            </Section>
 
             <div>
-                <Link href={`/notes/${noteId}/flashcards`} className="text-blue-600 underline">
-                    Back to other Flashcards
-                </Link>
+                <Button size="sm" variant="subtle" className="">
+                    <Link href={`/notes/${noteId}/flashcards`} className="text-black-600 underline">
+                        Back to other Flashcards
+                    </Link>
+                </Button>
             </div>
 
-            <div>
-                <Link href={`/notes/${noteId}/`} className="text-blue-600 underline">
+            <Button size="sm" variant="subtle" className="">
+                <Link href={`/notes/${noteId}/`} className="text-black-600 underline">
                     Back to Note
                 </Link>
-            </div>
-        </main>
+            </Button>
+        </Container>
     )
 }
