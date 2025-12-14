@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { useUpdateFlashcard } from "@/lib/hooks/flashcards";
+import Container from "./Container";
+import Button from "./Button";
+import Input from "./Input";
+
 
 export default function FlashcardEditForm({ flashcardId, initialData }: { flashcardId: number; initialData?: { question: string; answer: string; note_id: number; source: string } }) {
     const [id, setId] = useState(initialData ? String(flashcardId) : "");
@@ -22,34 +26,38 @@ export default function FlashcardEditForm({ flashcardId, initialData }: { flashc
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-            <input
-                className="border p-2 w-full rounded"
-                placeholder="Question"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-            />
+        <Container>
+            <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+                <Input
+                    className="border p-2 w-full rounded"
+                    placeholder="Question"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                />
 
-            <textarea
-                className="border p-2 w-full rounded"
-                placeholder="Answer"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-            />
+                <textarea
+                    className="border p-2 w-full rounded"
+                    placeholder="Answer"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                />
 
-            <button
-                className="bg-blue-600 text-white p-2 rounded"
-                type="submit"
-                disabled={editFlashcard.isLoading}
-            >
-                Edit Flashcard
-            </button>
+                <Button 
+                    size="sm" 
+                    variant="default" 
+                    className=""
+                    type="submit"
+                    disabled={editFlashcard.isLoading}
+                >
+                    Edit Flashcard
+                </Button>
 
-            {editFlashcard.isError && (
-                <p className="text-red-500">{String(editFlashcard.error)}</p>
-            )}
+                {editFlashcard.isError && (
+                    <p className="text-red-500">{String(editFlashcard.error)}</p>
+                )}
 
-            {editFlashcard.isSuccess && <p className="text-green-600">Updated!</p>}
-        </form>
+                {editFlashcard.isSuccess && <p className="text-green-600">Updated!</p>}
+            </form>
+        </Container>
     );
 }
