@@ -5,6 +5,7 @@ import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import Section from "@/components/Section";
 import Container from "@/components/Container";
+import Button from "@/components/Button";
 
 export default async function NoteDetailPage(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;
@@ -31,15 +32,17 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
                 <NoteEditForm initialData={note}/>
             </Section>
             <div>
-                <Link href={`/notes/${noteId}/flashcards`} className="text-blue-600 underline">
-                    View Flashcards for this Note
-                </Link>
+                <Button size="sm" variant="subtle" className="">
+                    <Link href={`/notes/${noteId}/flashcards`} className="text-black-600 underline">
+                        View Flashcards for this Note
+                    </Link>
+                </Button>
             </div>
-            <div>
-                <Link href="/notes" className="text-blue-600 underline">
+            <Button size="sm" variant="subtle" className="">
+                <Link href="/notes" className="text-black-600 underline">
                     Back to Notes
                 </Link>
-            </div>
+            </Button>
         </Container>
     );
 }
