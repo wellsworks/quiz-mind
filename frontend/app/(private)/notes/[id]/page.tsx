@@ -2,6 +2,9 @@ import { getNoteByIdServer } from "@/lib/api-server";
 import NoteEditForm from "@/components/NoteEditForm";
 import NoteView from "@/components/NoteView";
 import Link from "next/link";
+import PageHeader from "@/components/PageHeader";
+import Section from "@/components/Section";
+import Container from "@/components/Container";
 
 export default async function NoteDetailPage(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;
@@ -14,28 +17,29 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
     const note = await getNoteByIdServer(noteId);
 
     return (
-        <main className="p-6 space-y-4">
-            <h1 className="text-2xl font-bold">Note Detail</h1>
+        <Container className="py-10 space-y-8">
+            <PageHeader
+                title="Note Details"
+                description="Edit and review this note."
+            />
 
-            <section>
+            <Section title="Note Review">
                 <NoteView note={note} />
-            </section>
+            </Section>
 
-            <section>
+            <Section title="Edit this Note">
                 <NoteEditForm initialData={note}/>
-            </section>
-
+            </Section>
             <div>
                 <Link href={`/notes/${noteId}/flashcards`} className="text-blue-600 underline">
                     View Flashcards for this Note
                 </Link>
             </div>
-
             <div>
                 <Link href="/notes" className="text-blue-600 underline">
                     Back to Notes
                 </Link>
             </div>
-        </main>
+        </Container>
     );
 }
