@@ -42,7 +42,7 @@ export default function NoteCreateForm() {
                 <Button 
                     size="sm"
                     type="submit" 
-                    className="px-4 py-2 rounded-xl bg-black text-white"
+                    className=""
                     disabled={createNote.isLoading}
                 >
                     Create Note

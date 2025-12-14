@@ -2,6 +2,9 @@
 
 import React, { useState } from "react";
 import { useUpdateNote } from "@/lib/hooks/notes";
+import Container from "./Container";
+import Input from "./Input";
+import Button from "./Button";
 
 export default function NoteEditForm({ initialData }: { initialData?: { id: number; title: string; content: string }}) {
     const [id, setId] = useState(initialData ? String(initialData.id) : "");
@@ -19,34 +22,37 @@ export default function NoteEditForm({ initialData }: { initialData?: { id: numb
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-            <input
-                className="border p-2 w-full rounded"
-                placeholder="Note title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
+        <Container>
+            <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+                <Input
+                    className="border p-2 w-full rounded"
+                    placeholder="Note title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
 
-            <textarea
-                className="border p-2 w-full rounded"
-                placeholder="Note content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-            />
+                <textarea
+                    className="border p-2 w-full rounded"
+                    placeholder="Note content"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                />
 
-            <button
-                className="bg-blue-600 text-white p-2 rounded"
-                type="submit"
-                disabled={editNote.isLoading}
-            >
-                Edit Note
-            </button>
+                <Button
+                    size="sm"
+                    className=""
+                    type="submit"
+                    disabled={editNote.isLoading}
+                >
+                    Edit Note
+                </Button>
 
-            {editNote.isError && (
-                <p className="text-red-500">{String(editNote.error)}</p>
-            )}
+                {editNote.isError && (
+                    <p className="text-red-500">{String(editNote.error)}</p>
+                )}
 
-            {editNote.isSuccess && <p className="text-green-600">Updated!</p>}
-        </form>
+                {editNote.isSuccess && <p className="text-green-600">Updated!</p>}
+            </form>
+        </Container>
     );
 }
