@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useCreateFlashcard } from "@/lib/hooks/flashcards";
+import Container from "./Container";
+import Button from "./Button";
+import Input from "./Input";
 
 
 export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
@@ -31,24 +34,29 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
 
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-xl">
-            <input
-                type="text"
-                placeholder="Question"
-                className="w-full p-2 border rounded-lg"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-            />
-            <input
-                type="text"
-                placeholder="Answer"
-                className="w-full p-2 border rounded-lg"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-            />
-            <button type="submit" className="px-4 py-2 rounded-xl bg-black text-white">
-                Create Flashcard
-            </button>
-        </form>
+        <Container>
+            <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-xl">
+                <Input
+                    type="text"
+                    placeholder="Question"
+                    className="w-full p-2 border rounded-lg"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                />
+                <Input
+                    type="text"
+                    placeholder="Answer"
+                    className="w-full p-2 border rounded-lg"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                />
+                <Button 
+                    size="sm"
+                    type="submit" 
+                    className="">
+                    Create Flashcard
+                </Button>
+            </form>
+        </Container>
     );
 }
