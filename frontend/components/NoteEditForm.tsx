@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useUpdateNote } from "@/lib/hooks/notes";
+import { useUpdateNote, useDeleteNote } from "@/lib/hooks/notes";
 import Container from "./Container";
 import Input from "./Input";
 import Button from "./Button";
@@ -12,14 +12,23 @@ export default function NoteEditForm({ initialData }: { initialData?: { id: numb
     const [content, setContent] = useState(initialData ? initialData.content : "");
 
     const editNote = useUpdateNote();
+    const deleteNote = useDeleteNote();
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        editNote.mutate({id, payload: { title, content }});
-        setId("");
-        setTitle("");
-        setContent("");
+        if (window.confirm("Are you sure you want to change this note?")) {
+            editNote.mutate({id, payload: { title, content }});
+            setId("");
+            setTitle("");
+            setContent("");
+        }
     }
+    
+    const handleDelete = () => {
+        if (window.confirm("Are you sure you want to delete this note?")) {
+            deleteNote.mutate(id);
+        }
+    };
 
     return (
         <Container>
@@ -52,6 +61,21 @@ export default function NoteEditForm({ initialData }: { initialData?: { id: numb
                 )}
 
                 {editNote.isSuccess && <p className="text-green-600">Updated!</p>}
+
+                <Button
+                    className=""
+                    size="sm"
+                    variant="destructive"
+                    onClick={handleDelete}
+                >
+                    Delete Note
+                </Button>
+
+                {deleteNote.isError && (
+                    <p className="text-red-500">{String(deleteNote.error)}</p>
+                )}
+
+                {deleteNote.isSuccess && <p className="text-green-600">Note Deleted!</p>}
             </form>
         </Container>
     );
