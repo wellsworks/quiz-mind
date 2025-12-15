@@ -18,3 +18,4 @@ class Note(Base):
     # Relationships
     user = relationship("User", back_populates="notes")
     flashcards = relationship("Flashcard", back_populates="note", cascade="all, delete-orphan")
+    ai_flashcard_jobs = relationship("AIFlashcardJob", back_populates="note", cascade="all, delete-orphan")
