@@ -5,6 +5,7 @@ import { useUpdateNote, useDeleteNote } from "@/lib/hooks/notes";
 import Container from "./Container";
 import Input from "./Input";
 import Button from "./Button";
+import { redirect } from "next/navigation";
 
 export default function NoteEditForm({ initialData }: { initialData?: { id: number; title: string; content: string }}) {
     const [id, setId] = useState(initialData ? String(initialData.id) : "");
@@ -27,6 +28,7 @@ export default function NoteEditForm({ initialData }: { initialData?: { id: numb
     const handleDelete = () => {
         if (window.confirm("Are you sure you want to delete this note?")) {
             deleteNote.mutate(id);
+            redirect("/notes");
         }
     };
 
@@ -62,7 +64,8 @@ export default function NoteEditForm({ initialData }: { initialData?: { id: numb
 
                 {editNote.isSuccess && <p className="text-green-600">Updated!</p>}
 
-                <Button
+            </form>
+            <Button
                     className=""
                     size="sm"
                     variant="destructive"
@@ -76,7 +79,6 @@ export default function NoteEditForm({ initialData }: { initialData?: { id: numb
                 )}
 
                 {deleteNote.isSuccess && <p className="text-green-600">Note Deleted!</p>}
-            </form>
         </Container>
     );
 }
