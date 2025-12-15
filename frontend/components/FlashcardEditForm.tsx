@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useUpdateFlashcard } from "@/lib/hooks/flashcards";
+import { useUpdateFlashcard, useDeleteFlashcard } from "@/lib/hooks/flashcards";
 import Container from "./Container";
 import Button from "./Button";
 import Input from "./Input";
+import { redirect } from "next/navigation";
 
 
 export default function FlashcardEditForm({ flashcardId, initialData }: { flashcardId: number; initialData?: { question: string; answer: string; note_id: number; source: string } }) {
@@ -15,15 +16,25 @@ export default function FlashcardEditForm({ flashcardId, initialData }: { flashc
     const source = "user_created"
 
     const editFlashcard = useUpdateFlashcard();
+    const deleteFlashcard = useDeleteFlashcard();
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        editFlashcard.mutate({id, payload: { answer, question, note_id: Number(note_id), source }});
-        setId("");
-        setQuestion("");
-        setAnswer("");
-        setNoteId("");
+        if (window.confirm("Are you sure you want to change this flashcard?")) {
+            editFlashcard.mutate({id, payload: { answer, question, note_id: Number(note_id), source }});
+            setId("");
+            setQuestion("");
+            setAnswer("");
+            setNoteId("");
+        }
     }
+
+    const handleDelete = () => {
+        if (window.confirm("Are you sure you want to delete this flashcard?")) {
+            deleteFlashcard.mutate(id);
+            redirect(`/notes/${note_id}/flashcards`);
+        }
+    };
 
     return (
         <Container>
@@ -57,7 +68,22 @@ export default function FlashcardEditForm({ flashcardId, initialData }: { flashc
                 )}
 
                 {editFlashcard.isSuccess && <p className="text-green-600">Updated!</p>}
+
             </form>
+            <Button
+                    size="sm"
+                    variant="destructive"
+                    className=""
+                    onClick={handleDelete}
+                >
+                    Delete Flashcard
+                </Button>
+
+                {deleteFlashcard.isError && (
+                    <p className="text-red-500">{String(deleteFlashcard.error)}</p>
+                )}
+
+                {deleteFlashcard.isSuccess && <p className="text-green-600">Flashcard Deleted!</p>}
         </Container>
     );
 }
