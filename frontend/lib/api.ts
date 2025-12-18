@@ -67,7 +67,7 @@ export async function getNoteById(id: string) {
 }
 
 export async function createNote(payload: { title: string; content: string }) {
-    return request("/notes/", { method: "POST", body: JSON.stringify(payload) })
+    return request("/notes/", { method: "POST", body: JSON.stringify(payload) });
 }
 
 export async function updateNote({ id, payload }: { id: string; payload: any; }) {
@@ -107,11 +107,23 @@ export async function updateFlashcard({ id, payload }: { id: string; payload: an
     return request(`/flashcards/${id}`, {
         method: "PUT",
         body: JSON.stringify(payload)
-    })
+    });
 }
 
 export async function deleteFlashcard(id: string) {
     return request(`/flashcards/${id}`, {
         method: "DELETE",
     });
+}
+
+//------ AI FLASHCARDS API FUNCTIONS -------//
+export async function startFlashcardGeneration(note_id: string) {
+    return request(`/notes/${note_id}/flashcards/generate`, {
+        method: "POST",
+        body: JSON.stringify(note_id)
+    });
+}
+
+export async function getAIJobById(job_id: string) {
+    return request(`/ai/jobs/${job_id}`, { method: "GET" });
 }
