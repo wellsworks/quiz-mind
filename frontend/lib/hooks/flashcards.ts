@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, QueryClientContext } from "@tanstack/react-query";
 import {
     getFlashcards,
     getFlashcardById,
@@ -8,6 +8,8 @@ import {
     createFlashcard,
     updateFlashcard,
     deleteFlashcard,
+    startFlashcardGeneration,
+    getAIJobById,
 } from "@/lib/api";
 
 const FLASH_KEY = ["flashcards"];
@@ -71,4 +73,26 @@ export function useDeleteFlashcard() {
             qc.invalidateQueries({ queryKey: [...FLASH_KEY, id] });
         },
     });
+}
+
+export function useGenerateFlashcard(noteId: string) {
+
+    return useMutation({
+        mutationFn: startFlashcardGeneration,
+        onSuccess: (data) => {
+        },
+    });
+}
+
+export function useAIJobById(jobId: string) {
+
+    return useQuery({
+        queryKey: ["ai-job", jobId],
+        queryFn: () => getAIJobById(jobId!),
+        enabled: !!jobId,
+        refetchInterval: (data) => {
+            if (!data) return false;
+            return data.status === "pending" ? 2000 : false;
+        },
+    })
 }
