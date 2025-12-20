@@ -31,7 +31,11 @@ def generate_flashcards(
         requested_count=10,
     )
 
-    background_tasks.add_task(run_flashcard_job, job.id)
+    background_tasks.add_task(
+        run_flashcard_job, 
+        job_id=job.id,
+        user_id=user.id,
+    )
     logger = logging.getLogger(__name__)
     logger.info(f"Starting flashcard job {job.id}")
 
