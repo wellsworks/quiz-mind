@@ -10,6 +10,7 @@ import {
     deleteFlashcard,
     startFlashcardGeneration,
     getAIJobById,
+    getAIFlashcardJobByNote,
 } from "@/lib/api";
 
 const FLASH_KEY = ["flashcards"];
@@ -42,7 +43,11 @@ export function useCreateFlashcard() {
 
     return useMutation({
         mutationFn: createFlashcard,
-        onSuccess: () => {
+        onSuccess: (_, variables) => {
+            qc.invalidateQueries(
+                { 
+                    queryKey: [...FLASH_KEY, String(variables.note_id)] 
+                });
             qc.invalidateQueries({ queryKey: FLASH_KEY });
         },
     });
@@ -60,7 +65,7 @@ export function useUpdateFlashcard() {
                 qc.invalidateQueries({ queryKey: [...FLASH_KEY, updated.id]})
             }
         }
-    })
+    });
 }
 
 export function useDeleteFlashcard() {
@@ -84,6 +89,18 @@ export function useGenerateFlashcard(noteId: string) {
     });
 }
 
+export function useAIFlashcardJob(
+    noteId: string,
+    isGenerating: boolean,
+) {
+    return useQuery({
+        queryKey: ["flashcard-job", noteId],
+        queryFn: () => getAIFlashcardJobByNote(noteId),
+        enabled: isGenerating,
+        refetchInterval: isGenerating ? 2000 : false,
+    });
+}
+
 export function useAIJobById(jobId: string) {
 
     return useQuery({
@@ -94,5 +111,5 @@ export function useAIJobById(jobId: string) {
             if (!data) return false;
             return data.status === "pending" ? 2000 : false;
         },
-    })
+    });
 }
