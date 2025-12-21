@@ -6,6 +6,7 @@ from app.util.notes import get_note
 from app.util.flashcards import create_flashcard
 from app.ai.flashcards.generator import generate_flashcards_pipeline
 from app.schemas.flashcard import FlashcardCreate
+import logging
 
 def run_flashcard_job(job_id: int, user_id: int):
     db: Session = SessionLocal()
@@ -28,6 +29,16 @@ def run_flashcard_job(job_id: int, user_id: int):
             create_flashcard(db=db, data=data)
 
         update_job_status(db, job_id, "completed")
+
+        logger = logging.getLogger(__name__)
+        logger.info(
+            (f"Flashcard job {job_id} completed"),
+            extra={
+                "job_id": job_id,
+                "note_id": note.id,
+                "flashcard_count": len(flashcards),
+            },
+        )
 
     except Exception as e:
         update_job_status(db, job_id, "failed", str(e))
