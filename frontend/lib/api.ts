@@ -124,6 +124,12 @@ export async function startFlashcardGeneration(note_id: string) {
     });
 }
 
+export async function getAIFlashcardJobByNote(note_id: string) {
+    return request(`/notes/${note_id}/flashcards/generate`, {
+        method: "GET",
+    });
+}
+
 export async function getAIJobById(job_id: string) {
     return request(`/ai/jobs/${job_id}`, { method: "GET" });
 }
