@@ -39,3 +39,12 @@ def update_job_status(
     job.status = status
     job.error_message = error_message
     db.commit()
+
+def get_flashcard_job_for_note(db: Session, note_id: int, user_id: int):
+    return (
+        db.query(AIFlashcardJob)
+        .filter(AIFlashcardJob.user_id == user_id)
+        .filter(AIFlashcardJob.note_id == note_id)
+        .order_by(AIFlashcardJob.id.desc())
+        .first()
+    )
