@@ -6,6 +6,7 @@ import PageHeader from "@/components/PageHeader";
 import Section from "@/components/Section";
 import Container from "@/components/Container";
 import Button from "@/components/Button";
+import NoteDetailView from "@/components/NoteDetailView";
 
 export default async function NoteDetailPage(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;
@@ -25,7 +26,7 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
             />
 
             <Section title="Note Review">
-                <NoteView note={note} />
+                <NoteDetailView note={note} />
             </Section>
 
             <Section title="Edit this Note">
