@@ -20,7 +20,10 @@ def get_job_status_for_note(
 ): 
     job = get_flashcard_job_for_note(db, note_id, user.id)
     if not job:
-        raise HTTPException(status_code=404)
+        return {
+            "job_id": None,
+            "status": "idle"
+        }
     
     return {
         "job_id": job.id,
