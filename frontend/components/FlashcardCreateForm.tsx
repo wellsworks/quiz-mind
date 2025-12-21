@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useCreateFlashcard, useGenerateFlashcard, useAIJobById } from "@/lib/hooks/flashcards";
+import { useCreateFlashcard, useGenerateFlashcard, useAIFlashcardJob } from "@/lib/hooks/flashcards";
 import Container from "./Container";
 import Button from "./Button";
 import Input from "./Input";
@@ -18,7 +18,8 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
     const [jobId, setJobId] = useState("");
     const qc = useQueryClient();
     const generateFlashcard = useGenerateFlashcard(noteId);
-    const getAIJobStatus = useAIJobById(jobId);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const jobQuery = useAIFlashcardJob(noteId, isGenerating);
 
 
     function handleSubmit(e: React.FormEvent) {
@@ -43,21 +44,18 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
             generateFlashcard.mutate( noteId , {
             onSuccess: (data) => {
                 setJobId(data.job_id);
-                if (getAIJobStatus.data?.status === "completed") {
-                    qc.invalidateQueries({
-                        queryKey: ["flashcards", noteId],
-                    });
-                }
-            }
-        });
+                setIsGenerating(true);
+                },
+            });
         }
     }
 
     useEffect(() => {
-        if (getAIJobStatus.data?.status === "completed") {
-            setJobId(null);
+        if (jobQuery.data?.status === "completed") {
+            qc.invalidateQueries({ queryKey: ["flashcards", noteId] });
+            setIsGenerating(false);
         }
-    }, [getAIJobStatus.data?.status]);
+    }, [jobQuery.data?.status, noteId, qc]);
 
 
     return (
@@ -91,27 +89,27 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
                 onClick={handleGeneration}
                 disabled={
                     generateFlashcard.isPending || 
-                    getAIJobStatus.data?.status === "pending"
+                    jobQuery.data?.status === "pending"
                 }
             >
-                {getAIJobStatus.data?.status === "pending"
+                {jobQuery.data?.status === "pending"
                     ? "Generating..."
                     : "Generate Flashcards with AI"}
             </Button>
 
-            {getAIJobStatus.data?.status === "pending" && (
+            {jobQuery.data?.status === "pending" && (
                 <p className="mt-2 text-sm text-gray-500">
                     Generating flashcards...
                 </p>
             )}
 
-            {getAIJobStatus.data?.status === "failed" && (
+            {jobQuery.data?.status === "failed" && (
                 <p className="mt-2 text-sm text-red-600">
                     Failed to generate flashcards.
                 </p>
             )}
 
-            {getAIJobStatus.data?.status === "failed" && (
+            {jobQuery.data?.status === "failed" && (
                 <Button
                     size="sm"
                     variant="outline"
@@ -119,7 +117,7 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
                     onClick={handleGeneration}
                     disabled={
                         generateFlashcard.isPending ||
-                        getAIJobStatus.data?.status === "pending"
+                        jobQuery.data?.status === "pending"
                     }
                 >
                     Retry
