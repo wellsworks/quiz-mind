@@ -18,6 +18,8 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
     const [jobId, setJobId] = useState("");
     const qc = useQueryClient();
     const generateFlashcard = useGenerateFlashcard(noteId);
+
+    const [progress, setProgress] = useState(0);
     const [isGenerating, setIsGenerating] = useState(false);
     const jobQuery = useAIFlashcardJob(noteId, isGenerating);
 
@@ -57,6 +59,24 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
         }
     }, [jobQuery.data?.status, noteId, qc]);
 
+    useEffect(() => {
+        if (jobQuery.data?.status === "pending" || jobQuery.data?.status === "processing") {
+            const interval = setInterval(() => {
+                setProgress(p => Math.min(p + 0.5, 90))
+            }, 500)
+
+            return () => clearInterval(interval);
+        }
+
+        if (jobQuery.data?.status === "completed") {
+            setProgress(100);
+        }
+
+        if (jobQuery.data?.status === "failed") {
+            setProgress(0);
+        }
+    }, [jobQuery.data?.status])
+
 
     return (
         <Container>
@@ -92,22 +112,8 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
                     jobQuery.data?.status === "pending"
                 }
             >
-                {jobQuery.data?.status === "pending"
-                    ? "Generating..."
-                    : "Generate Flashcards with AI"}
+                Generate Flashcards with AI
             </Button>
-
-            {jobQuery.data?.status === "pending" && (
-                <p className="mt-2 text-sm text-gray-500">
-                    Generating flashcards...
-                </p>
-            )}
-
-            {jobQuery.data?.status === "failed" && (
-                <p className="mt-2 text-sm text-red-600">
-                    Failed to generate flashcards.
-                </p>
-            )}
 
             {jobQuery.data?.status === "failed" && (
                 <Button
@@ -123,6 +129,40 @@ export function FlashcardCreateForm({ note_id }: { note_id?: number }) {
                     Retry
                 </Button>
             )}
+
+            <div className="mt-4 space-y-2">
+                {jobQuery.data?.status === "pending" && (
+                    <p className="mt-2 rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
+                        Checking your notes...
+                    </p>
+                )}
+
+                {jobQuery.data?.status === "processing" && (
+                    <p className="mt-2 rounded border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700">
+                        Generating flashcards from your notes. This may take a few seconds.
+                    </p>
+                )}
+
+                {jobQuery.data?.status === "completed" && (
+                    <p className="mt-2 rounded border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                        Flashcards generated!
+                    </p>
+                )}
+
+                {jobQuery.data?.status === "failed" && (
+                    <p className="mt-2 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                        Failed to generate flashcards.
+                    </p>
+                )}
+
+                <div className="w-full bg-red-200 rounded-full h-2 overflow-hidden">
+                    <div 
+                        className="bg-red-600 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${progress}%`}}
+                    />
+                </div>
+            </div>
+            
         </Container>
     );
 }
