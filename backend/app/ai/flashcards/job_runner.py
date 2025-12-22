@@ -8,6 +8,8 @@ from app.ai.flashcards.generator import generate_flashcards_pipeline
 from app.schemas.flashcard import FlashcardCreate
 import logging
 
+job_status = ["idle", "pending", "processing", "completed", "failed"] # update to enum in db model 
+
 def run_flashcard_job(job_id: int, user_id: int):
     db: Session = SessionLocal()
     
@@ -16,8 +18,10 @@ def run_flashcard_job(job_id: int, user_id: int):
         update_job_status(db, job_id, "pending")
 
         note = get_note(db, job.note_id, user_id)
-
+        update_job_status(db, job_id, "processing")
+        
         flashcards = generate_flashcards_pipeline(note.content)
+        
 
         for fc in flashcards:
             data = FlashcardCreate(
