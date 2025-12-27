@@ -1,11 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useUpdateFlashcard, useDeleteFlashcard } from "@/lib/hooks/flashcards";
-import Container from "./Container";
-import Button from "./Button";
-import Input from "./Input";
-import { redirect } from "next/navigation";
+import { useUpdateFlashcard } from "@/lib/hooks/flashcards";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { 
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger, 
+} from "@/components/ui/dialog";
+import { SquarePen } from "lucide-react";
+import { toast } from "sonner";
 
 
 export default function FlashcardEditForm({ flashcardId, initialData }: { flashcardId: number; initialData?: { question: string; answer: string; note_id: number; source: string } }) {
@@ -15,75 +25,104 @@ export default function FlashcardEditForm({ flashcardId, initialData }: { flashc
     const [note_id, setNoteId] = useState(initialData ? (initialData.note_id) : "");
     const source = "user_created"
 
-    const editFlashcard = useUpdateFlashcard();
-    const deleteFlashcard = useDeleteFlashcard();
+    const [open, setOpen] = useState(false);
 
-    function handleSubmit(e: React.FormEvent) {
+    const editFlashcard = useUpdateFlashcard();
+
+
+    function handleSubmit(e:React.FormEvent) {
         e.preventDefault();
-        if (window.confirm("Are you sure you want to change this flashcard?")) {
-            editFlashcard.mutate({id, payload: { answer, question, note_id: Number(note_id), source }});
-            setId("");
-            setQuestion("");
-            setAnswer("");
-            setNoteId("");
-        }
+        editFlashcard.mutate({
+            id, 
+            payload: { answer, question, note_id: Number(note_id), source }
+        },
+        {
+            onSuccess: () => {
+                toast.success("Flashcard updated")
+                setOpen(false);
+            },
+            onError: (error) => {
+                toast("Update failed"); {error instanceof Error ? error.message : "Something went wrong."}
+            }
+        },
+        );
     }
 
-    const handleDelete = () => {
-        if (window.confirm("Are you sure you want to delete this flashcard?")) {
-            deleteFlashcard.mutate(id);
-            redirect(`/notes/${note_id}/flashcards`);
-        }
-    };
+    function resetForm() {
+        setQuestion(initialData?.question ?? "");
+        setAnswer(initialData?.answer ?? "");
+    }
+
 
     return (
-        <Container>
-            <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-                <Input
-                    className="border p-2 w-full rounded"
-                    placeholder="Question"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                />
-
-                <textarea
-                    className="border p-2 w-full rounded"
-                    placeholder="Answer"
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                />
-
-                <Button 
-                    size="sm" 
-                    variant="default" 
-                    className=""
-                    type="submit"
-                    disabled={editFlashcard.isLoading}
-                >
-                    Edit Flashcard
+        <Dialog 
+            open={open} 
+            onOpenChange={(nextOpen) => {
+                setOpen(nextOpen)
+                if (!nextOpen) {
+                    resetForm()
+                }
+            }}
+        >
+            
+            <DialogTrigger asChild>
+                <Button variant="default" type="button" size="sm">
+                    <SquarePen/>
                 </Button>
+            </DialogTrigger>
+            
+            <DialogContent className="sm:max-w-[425px]">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
 
-                {editFlashcard.isError && (
-                    <p className="text-red-500">{String(editFlashcard.error)}</p>
-                )}
+                    <DialogHeader>
+                        <DialogTitle>Edit flashcard</DialogTitle>
+                        <DialogDescription>
+                            Make changes to your flashcard here. Click save when you&apos;re done.
+                        </DialogDescription>
+                    </DialogHeader>
 
-                {editFlashcard.isSuccess && <p className="text-green-600">Updated!</p>}
-
-            </form>
-            <Button
-                    size="sm"
-                    variant="destructive"
-                    className=""
-                    onClick={handleDelete}
-                >
-                    Delete Flashcard
-                </Button>
-
-                {deleteFlashcard.isError && (
-                    <p className="text-red-500">{String(deleteFlashcard.error)}</p>
-                )}
-
-                {deleteFlashcard.isSuccess && <p className="text-green-600">Flashcard Deleted!</p>}
-        </Container>
+                    <div className="grid gap-4">
+                        <div className="grid gap-3">
+                            <Input
+                                type="text"
+                                placeholder="Question"
+                                value={question}
+                                onChange={(e) => setQuestion(e.target.value)}
+                            />
+                        </div>
+                        <div className="grid gap-3">
+                            <Input
+                                type="text"
+                                placeholder="Answer"
+                                value={answer}
+                                onChange={(e) => setAnswer(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                
+                        <DialogClose asChild>
+                            <Button 
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                            >
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        
+                        <Button 
+                            type="submit"
+                            size="sm" 
+                            variant="default" 
+                            disabled={editFlashcard.isLoading}
+                        >
+                            Save
+                        </Button>
+                        
+                    </DialogFooter>
+                </form> 
+            </DialogContent>
+        </Dialog>
     );
 }
