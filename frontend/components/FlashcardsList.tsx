@@ -4,7 +4,16 @@ import { useFlashcardsByNoteId } from "@/lib/hooks/flashcards";
 import Link from "next/link";
 import FlashcardView from "./FlashcardView";
 import { Grid } from "./Grid";
-import Button from "./Button";
+import { Button } from "./ui/button"
+import { 
+    Card,
+    CardTitle,
+    CardHeader,
+    CardContent,
+    CardDescription,
+} from "./ui/card";
+import FlashcardDeleteDialog from "./FlashcardDeleteDialog";
+import FlashcardEditForm from "./FlashcardEditForm";
 
 export default function FlashcardList({ noteId }: { noteId: number }) {
     const id = String(noteId);
@@ -37,15 +46,18 @@ export default function FlashcardList({ noteId }: { noteId: number }) {
         <Grid>
             {flashcards.map((card: any) => (
                 <div key={card.id} className="space-y-2">
-                    <FlashcardView flashcard={card} />
-                    <Button size="sm" variant="subtle" className="">
-                        <Link 
-                            href={`/notes/${noteId}/flashcards/${card.id}`} 
-                            className="text-black-600 underline"
-                        >
-                            View
-                        </Link>
-                    </Button>
+                    <Card className="w-full max-w-sm">
+                        <CardHeader>
+                            <CardTitle>{card.question}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <CardDescription>{card.answer}</CardDescription>
+                        </CardContent>
+                    </Card>
+                    <div className="flex gap-2">
+                        <FlashcardEditForm flashcardId={card.id} initialData={card}/>
+                        <FlashcardDeleteDialog flashcardId={card.id} initialData={card}/>
+                    </div>
                 </div>
             ))}
         </Grid>
