@@ -1,84 +1,130 @@
 "use client";
 
 import React, { useState } from "react";
-import { useUpdateNote, useDeleteNote } from "@/lib/hooks/notes";
-import Container from "./Container";
-import Input from "./Input";
-import Button from "./Button";
-import { redirect } from "next/navigation";
+import { useUpdateNote } from "@/lib/hooks/notes";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { 
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger, 
+} from "@/components/ui/dialog";
+import { SquarePen } from "lucide-react";
+import { toast } from "sonner";
+import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group"
 
-export default function NoteEditForm({ initialData }: { initialData?: { id: number; title: string; content: string }}) {
-    const [id, setId] = useState(initialData ? String(initialData.id) : "");
-    const [title, setTitle] = useState(initialData ? initialData.title : "");
-    const [content, setContent] = useState(initialData ? initialData.content : "");
+export default function NoteEditForm({ note }: { note?: { id: number; title: string; content: string }}) {
+    const [id, setId] = useState(note ? String(note.id) : "");
+    const [title, setTitle] = useState(note ? note.title : "");
+    const [content, setContent] = useState(note ? note.content : "");
+
+    const [open, setOpen] = useState(false);
 
     const editNote = useUpdateNote();
-    const deleteNote = useDeleteNote();
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (window.confirm("Are you sure you want to change this note?")) {
-            editNote.mutate({id, payload: { title, content }});
-            setId("");
-            setTitle("");
-            setContent("");
-        }
+        editNote.mutate({
+            id, 
+            payload: { title, content }
+        },
+        {
+            onSuccess: () => {
+                toast.success("Note updated!", { id: "update" });
+                setOpen(false);
+            },
+            onError: (error) => {
+                toast("Update failed", { id: "update"});
+            }
+        });
+    }
+
+    function resetForm() {
+        setTitle(note?.title ?? "");
+        setContent(note?.content ?? "");
     }
     
-    const handleDelete = () => {
-        if (window.confirm("Are you sure you want to delete this note?")) {
-            deleteNote.mutate(id);
-            redirect("/notes");
-        }
-    };
 
     return (
-        <Container>
-            <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-                <Input
-                    className="border p-2 w-full rounded"
-                    placeholder="Note title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
+        <Dialog 
+            open={open} 
+            onOpenChange={(nextOpen) => {
+                setOpen(nextOpen)
+                if (!nextOpen) {
+                    resetForm()
+                }
+            }}
+        >
 
-                <textarea
-                    className="border p-2 w-full rounded"
-                    placeholder="Note content"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                />
-
-                <Button
-                    size="sm"
-                    className=""
-                    type="submit"
-                    disabled={editNote.isLoading}
-                >
-                    Edit Note
+            <DialogTrigger asChild>
+                <Button variant="default" type="button" size="icon-sm">
+                    <SquarePen/>
                 </Button>
+            </DialogTrigger>
+        
+            <DialogContent className="min-w-svh">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
 
-                {editNote.isError && (
-                    <p className="text-red-500">{String(editNote.error)}</p>
-                )}
+                    <DialogHeader>
+                        <DialogTitle>Edit Note</DialogTitle>
+                        <DialogDescription>
+                            Make changes to your note here. Click save when you&apos;re done.
+                        </DialogDescription>
+                    </DialogHeader>
 
-                {editNote.isSuccess && <p className="text-green-600">Updated!</p>}
-
-            </form>
-            <Button
-                    className=""
-                    size="sm"
-                    variant="destructive"
-                    onClick={handleDelete}
-                >
-                    Delete Note
-                </Button>
-
-                {deleteNote.isError && (
-                    <p className="text-red-500">{String(deleteNote.error)}</p>
-                )}
-
-                {deleteNote.isSuccess && <p className="text-green-600">Note Deleted!</p>}
-        </Container>
+                    <div className="grid gap-4">
+                        <div className="grid gap-3 max-w-xs">
+                            <Input
+                                type="text"
+                                required
+                                placeholder="Note title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                        </div>
+                        <div className="grid gap-3">
+                            <div className="grid w-full min-w-full gap-4">
+                                <InputGroup>
+                                    <InputGroupTextarea
+                                        required
+                                        placeholder="Write your note here"
+                                        className="min-h-[400px]"
+                                        value={content}
+                                        onChange={(e) => setContent(e.target.value)}
+                                    />
+                                </InputGroup>
+                            </div>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                
+                        <DialogClose asChild>
+                            <Button 
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                            >
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        
+                        <Button 
+                            type="submit"
+                            size="sm" 
+                            variant="default" 
+                            disabled={editNote.isLoading}
+                        >
+                            Save
+                        </Button>
+                        
+                    </DialogFooter>         
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }
