@@ -1,16 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import ThemeToggle from "@/components/ThemeToggle";
 import { useUser, useLogout } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/ui";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu"
+import { Sun, Moon, LogOut } from "lucide-react";
+import { Toggle } from "./ui/toggle";
+import { useUIStore } from "@/store/ui";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 
 export default function Navbar() {
     useUser();
     const user = useAuthStore((s) => s.user);
     const logout = useLogout();
     const router = useRouter();
+
+    const theme = useUIStore((s) => s.theme);
+    const toggleTheme = useUIStore((s) => s.toggleTheme);
 
     const handleLogout = () => {
         logout.mutate(undefined, {
@@ -21,41 +33,48 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="border-b bg-background/80 backdrop-blur">
-            <div className="container mx-auto flex items-center justify-between py-4 px-4">
+        <NavigationMenu className="bg-background text-foreground">
 
-                <div className="flex items-center gap-6">
-                    <Link href="/" className="font-bold text-lg">
-                        Quiz Mind
+            <div className="flex items-center justify-between py-4 px-4">
+            <NavigationMenuList className="flex-row items-center space-x-4 text-sm">
+
+                <NavigationMenuItem>
+                    <Link href="/dashboard" className="flex-row items center gap-2 hover:bg-background/50">
+                        Dashboard
                     </Link>
+                </NavigationMenuItem>
+                <Separator orientation="vertical" />
 
-                    <div className="hidden md:flex gap-4 text-sm">
-                        <Link href="/dashboard" className="hover:underline">
-                            Dashboard
-                        </Link>
-                    </div>
+                <NavigationMenuItem>
+                    <Link href="/notes" className="flex-row items center gap-2"> 
+                        Notes
+                    </Link>
+                </NavigationMenuItem>
+                <Separator orientation="vertical" />
 
-                    <div className="hidden md:flex gap-4 text-sm">
-                        <Link href="/notes" className="hover:underline">
-                            Notes
-                        </Link>
-                    </div>
-                </div>
+                <NavigationMenuItem asChild>
+                    <Button
+                        size="default"
+                        type="button"
+                        variant="ghost"
+                        onClick={handleLogout}
+                    >
+                        Logout <LogOut />
+                    </Button>
+                </NavigationMenuItem>
+                <Separator orientation="vertical" />
 
-                <div className="flex items-center-gap-3">
-                    <ThemeToggle />
-
-                    {!user ? (
-                        <Link href="/login">
-                            <button>Login</button>
-                        </Link>
-                    ) : ( 
-                        <button onClick={handleLogout}>
-                            Logout
-                        </button>
-                    )}
-                </div>
+                <NavigationMenuItem asChild>
+                    <Toggle 
+                        size="default" 
+                        aria-label="Toggle Theme"
+                        onClick={toggleTheme}
+                    >
+                        {theme === "dark" ? <Sun /> : <Moon />} 
+                    </Toggle>
+                </NavigationMenuItem>        
+            </NavigationMenuList>
             </div>
-        </nav>
+        </NavigationMenu>
     );
 }
