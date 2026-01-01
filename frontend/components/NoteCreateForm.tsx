@@ -2,52 +2,120 @@
 
 import { useState } from 'react';
 import { useCreateNote } from '@/lib/hooks/notes';
-import Container from './Container';
-import Input from './Input';
-import Button from './Button';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { 
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger, 
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group"
 
 export default function NoteCreateForm() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const createNote = useCreateNote();
 
+    const [open, setOpen] = useState(false);
+
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         createNote.mutate({ title, content }, {
             onSuccess: () => {
-                setTitle("");
-                setContent("");
+                toast.success("Note created!", { id: "create" });
+                setOpen(false);                
+            },
+            onError: (error) => {
+                toast.error("Creation failed", { id: "create" });
             }
         });
     }
 
+    function resetForm() {
+        setTitle("");
+        setContent("");
+    }
+
     return (
-        <Container>
-            <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-xl">
-                <Input
-                    type="text"
-                    placeholder="Title"
-                    className="w-full p-2 border rounded-lg"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-
-                <textarea
-                    placeholder="Note content"
-                    className="w-full p-2 border rounded-lg"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                />
-
-                <Button 
-                    size="sm"
-                    type="submit" 
-                    className=""
-                    disabled={createNote.isLoading}
-                >
-                    Create Note
+        <Dialog 
+            open={open} 
+            onOpenChange={(nextOpen) => {
+                setOpen(nextOpen)
+                if (!nextOpen) {
+                    resetForm()
+                }
+            }}
+        >
+            <DialogTrigger asChild>
+                <Button variant="default" type="button" size="sm">
+                    New Note
                 </Button>
-            </form>
-        </Container>
+            </DialogTrigger>
+
+            <DialogContent className="min-w-svh">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
+
+                    <DialogHeader>
+                        <DialogTitle>Create a note</DialogTitle>
+                        <DialogDescription>
+                            Add a new note here. Click save when you&apos;re done.
+                        </DialogDescription>
+                    </DialogHeader> 
+
+                    <div className="grid gap-4">
+                        <div className="grid gap-3 max-w-xs">
+                            <Input
+                                type="text"
+                                required
+                                placeholder="Note title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                        </div>
+                        <div className="grid gap-3">
+                            <div className="grid w-full min-w-full gap-4">
+                                <InputGroup>
+                                    <InputGroupTextarea
+                                        required
+                                        placeholder="Write your note here"
+                                        className="min-h-[400px]"
+                                        value={content}
+                                        onChange={(e) => setContent(e.target.value)}
+                                    />
+                                </InputGroup>
+                            </div>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                                
+                        <DialogClose asChild>
+                            <Button 
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                            >
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                                        
+                        <Button 
+                            type="submit"
+                            size="sm" 
+                            variant="default" 
+                            disabled={createNote.isLoading}
+                        >
+                            Save
+                        </Button>
+                                        
+                    </DialogFooter>         
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }
