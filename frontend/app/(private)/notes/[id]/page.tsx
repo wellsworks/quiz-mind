@@ -27,6 +27,7 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
                 title="Note Details"
                 description="Review and edit this note."
             />
+            <Separator className="my-4" />
             <NoteDetailView note={note} />
             <Separator className="my-4" />
             <div className="flex gap-2">
@@ -48,7 +49,7 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
                 </div>
             </div>
 
-            <Section title="Flashcards for this Note">
+            <Section title="Flashcards for this note">
                 <div className="w-full">
                     <FlashcardList noteId={noteId}/>
                 </div>

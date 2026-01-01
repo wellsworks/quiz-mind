@@ -6,6 +6,7 @@ import { getNotesServer } from "@/lib/api-server";
 import PageHeader from "@/components/PageHeader";
 import Section from "@/components/Section";
 import Container from "@/components/Container";
+import { Separator } from "@/components/ui/separator";
 
 export default async function NotesPage({ params }: { params: { id: string }}) {
     const user = await getCurrentUserSSR();
@@ -16,17 +17,16 @@ export default async function NotesPage({ params }: { params: { id: string }}) {
     const notes = await getNotesServer();
 
     return (
-        <Container className="py-10 space-y-8">
+        <Container className="py-10 space-y-6 bg-background text-foreground">
             <PageHeader 
                 title="Your Notes"
-                description="Upload, organize, and review notes to learn faster."
+                description="Create and study notes to learn faster."
             />
+            <Separator className="my-4" />
 
-            <Section title={"Add a New Note"}>
-                <div className="flex items-center justify-between">
-                    <NoteCreateForm />
-                </div>
-            </Section>      
+            <div className="flex items-center justify-between">
+                <NoteCreateForm />
+            </div>    
 
             <Section title={"All Notes"}>
                 <div className="flex-items-center justify-betwen">
