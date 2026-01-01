@@ -1,11 +1,14 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/Card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-export default function NoteView({ note }: { note: { id: number; title: string; content: string } }) {
+export default function NoteView({ 
+    note, 
+}: { note: { id: number; title: string; content: string }, 
+}) {
 
     return (
-        <Card className="space-y-3">
+        <Card className="bg-secondary text-card-foreground hover:bg-secondary/20">
             <CardHeader>
                 <CardTitle>{note.title}</CardTitle>
             </CardHeader>
