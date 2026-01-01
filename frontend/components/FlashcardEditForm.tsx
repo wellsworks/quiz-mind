@@ -4,21 +4,22 @@ import { useState } from "react";
 import { useUpdateFlashcard } from "@/lib/hooks/flashcards";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Label } from "@/components/ui/label";
 import { 
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger, 
-} from "@/components/ui/dialog";
+    Popover,
+    PopoverContent,
+    PopoverTrigger, 
+} from "@/components/ui/popover";
 import { SquarePen } from "lucide-react";
 import { toast } from "sonner";
 
 
-export default function FlashcardEditForm({ flashcardId, initialData }: { flashcardId: number; initialData?: { question: string; answer: string; note_id: number; source: string } }) {
+export default function FlashcardEditForm({ 
+    flashcardId, initialData 
+}: { 
+    flashcardId: number; 
+    initialData?: { question: string; answer: string; note_id: number; source: string } 
+}) {
     const [id, setId] = useState(initialData ? String(flashcardId) : "");
     const [question, setQuestion] = useState(initialData ? initialData.question : "");
     const [answer, setAnswer] = useState(initialData ? initialData.answer : "");
@@ -55,7 +56,7 @@ export default function FlashcardEditForm({ flashcardId, initialData }: { flashc
 
 
     return (
-        <Dialog 
+        <Popover 
             open={open} 
             onOpenChange={(nextOpen) => {
                 setOpen(nextOpen)
@@ -65,52 +66,45 @@ export default function FlashcardEditForm({ flashcardId, initialData }: { flashc
             }}
         >
             
-            <DialogTrigger asChild>
+            <PopoverTrigger asChild>
                 <Button variant="default" type="button" size="sm">
                     <SquarePen/>
                 </Button>
-            </DialogTrigger>
+            </PopoverTrigger>
             
-            <DialogContent className="sm:max-w-[425px]">
+            <PopoverContent className="max-w-sm" align="start">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
 
-                    <DialogHeader>
-                        <DialogTitle>Edit flashcard</DialogTitle>
-                        <DialogDescription>
+                    <h4 className="leading-none font-medium">Edit Flashcard</h4>
+                        <p className="text-muted-foreground text-sm">
                             Make changes to your flashcard here. Click save when you&apos;re done.
-                        </DialogDescription>
-                    </DialogHeader>
+                        </p>
 
                     <div className="grid gap-4">
                         <div className="grid gap-3">
+                            <Label htmlFor="question">Question:</Label>
                             <Input
+                                id="question"
                                 type="text"
                                 placeholder="Question"
+                                className="w-full p-2 border rounded-lg"
                                 value={question}
                                 onChange={(e) => setQuestion(e.target.value)}
                             />
                         </div>
                         <div className="grid gap-3">
+                            <Label htmlFor="answer">Answer:</Label>
                             <Input
+                                id="answer"
                                 type="text"
                                 placeholder="Answer"
+                                className="w-full p-2 border rounded-lg"
                                 value={answer}
                                 onChange={(e) => setAnswer(e.target.value)}
                             />
                         </div>
                     </div>
-                    <DialogFooter>
-                
-                        <DialogClose asChild>
-                            <Button 
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                            >
-                                Cancel
-                            </Button>
-                        </DialogClose>
-                        
+
                         <Button 
                             type="submit"
                             size="sm" 
@@ -119,10 +113,8 @@ export default function FlashcardEditForm({ flashcardId, initialData }: { flashc
                         >
                             Save
                         </Button>
-                        
-                    </DialogFooter>
                 </form> 
-            </DialogContent>
-        </Dialog>
+            </PopoverContent>
+        </Popover>
     );
 }
