@@ -1,12 +1,15 @@
 import { getNoteByIdServer } from "@/lib/api-server";
 import NoteEditForm from "@/components/NoteEditForm";
-import NoteView from "@/components/NoteView";
-import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import Section from "@/components/Section";
 import Container from "@/components/Container";
-import Button from "@/components/Button";
 import NoteDetailView from "@/components/NoteDetailView";
+import { GenerateCard } from "@/components/GenerateCard";
+import FlashcardList from "@/components/FlashcardsList";
+import NoteDeleteDialog from "@/components/NoteDeleteDialog";
+import { FlashcardCreatePopover } from "@/components/FlashcardCreatePopover";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Separator } from "@/components/ui/separator";
 
 export default async function NoteDetailPage(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;
@@ -19,31 +22,37 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
     const note = await getNoteByIdServer(noteId);
 
     return (
-        <Container className="py-10 space-y-8">
+        <Container className="py-10 space-y-6 bg-background text-foreground">
             <PageHeader
                 title="Note Details"
-                description="Edit and review this note."
+                description="Review and edit this note."
             />
-
-            <Section title="Note Review">
-                <NoteDetailView note={note} />
-            </Section>
-
-            <Section title="Edit this Note">
-                <NoteEditForm initialData={note}/>
-            </Section>
-            <div>
-                <Button size="sm" variant="subtle" className="">
-                    <Link href={`/notes/${noteId}/flashcards`} className="text-black-600 underline">
-                        View Flashcards for this Note
-                    </Link>
-                </Button>
+            <NoteDetailView note={note} />
+            <Separator className="my-4" />
+            <div className="flex gap-2">
+                <div className="flex justify-start gap-2">
+                        <div className="grid gap-2">
+                            <div className="mx-auto">
+                                <ButtonGroup>
+                                    <NoteEditForm note={note}/>
+                                    <NoteDeleteDialog noteId={id}/>
+                                </ButtonGroup>
+                            </div>
+                            <ButtonGroup>
+                                <FlashcardCreatePopover note_id={noteId}/>
+                            </ButtonGroup>
+                        </div>
+                </div>
+                <div className="flex justify-end">
+                    <GenerateCard noteId={id}/>
+                </div>
             </div>
-            <Button size="sm" variant="subtle" className="">
-                <Link href="/notes" className="text-black-600 underline">
-                    Back to Notes
-                </Link>
-            </Button>
+
+            <Section title="Flashcards for this Note">
+                <div className="w-full">
+                    <FlashcardList noteId={noteId}/>
+                </div>
+            </Section>
         </Container>
     );
 }
