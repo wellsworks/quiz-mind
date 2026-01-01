@@ -1,17 +1,9 @@
 "use client";
 
 import { useFlashcardsByNoteId } from "@/lib/hooks/flashcards";
-import Link from "next/link";
 import FlashcardView from "./FlashcardView";
 import { Grid } from "./Grid";
-import { Button } from "./ui/button"
-import { 
-    Card,
-    CardTitle,
-    CardHeader,
-    CardContent,
-    CardDescription,
-} from "./ui/card";
+import { ButtonGroup } from "./ui/button-group";
 import FlashcardDeleteDialog from "./FlashcardDeleteDialog";
 import FlashcardEditForm from "./FlashcardEditForm";
 
@@ -46,17 +38,12 @@ export default function FlashcardList({ noteId }: { noteId: number }) {
         <Grid>
             {flashcards.map((card: any) => (
                 <div key={card.id} className="space-y-2">
-                    <Card className="w-full max-w-sm">
-                        <CardHeader>
-                            <CardTitle>{card.question}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <CardDescription>{card.answer}</CardDescription>
-                        </CardContent>
-                    </Card>
+                    <FlashcardView flashcard={card} />
                     <div className="flex gap-2">
-                        <FlashcardEditForm flashcardId={card.id} initialData={card}/>
-                        <FlashcardDeleteDialog flashcardId={card.id} initialData={card}/>
+                        <ButtonGroup>
+                            <FlashcardEditForm flashcardId={card.id} initialData={card}/>
+                            <FlashcardDeleteDialog flashcardId={card.id} initialData={card}/>
+                        </ButtonGroup>
                     </div>
                 </div>
             ))}
