@@ -4,7 +4,6 @@ import { useNotes } from "@/lib/hooks/notes";
 import Link from "next/link";
 import NoteView from "./NoteView";
 import { Grid } from "@/components/Grid";
-import Button from "./Button";
 
 export default function NotesList() {
     const { data, isLoading, isError } = useNotes();
@@ -36,15 +35,11 @@ export default function NotesList() {
         <Grid>
             {notes.map((note) => (
                 <div key={note.id} className="space-y-2">
-                    <NoteView note={note} />
-                    <Button size="sm" variant="subtle" className="">
-                        <Link 
-                            href={`/notes/${note.id}`} 
-                            className="text-black-600 underline"
-                        >
-                            View
-                        </Link>
-                    </Button>
+                    <Link 
+                        href={`/notes/${note.id}`} 
+                    >
+                        <NoteView note={note} />
+                    </Link>
                 </div>
             ))}
         </Grid>
