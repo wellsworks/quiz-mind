@@ -5,6 +5,16 @@ import { useRouter } from "next/navigation";
 import { apiLogin } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/ui";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "./ui/input";
+import Link from "next/link";
 
 export default function LoginForm() {
     const setUser = useAuthStore((s) => s.setUser);
@@ -40,34 +50,54 @@ export default function LoginForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-80">
-            <h2 className="text-2xl font-bold mb-2">Login</h2>
+        <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6")}>
+            <FieldGroup>
+                <div className="flex flex-col items-center gap-2 text-center">
+                    <h1 className="text-2xl font-bold">Login to your account</h1>
+                    <p className="text-muted-foreground text-sm text-balance">
+                        Enter your email below to login to your account
+                    </p>
+                </div>
+                <Field>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input
+                        id="email"
+                        className="border rounded p-2"
+                        type="email"
+                        name="email"
+                        autoComplete="email"
+                        placeholder="me@example.com"
+                        required
+                        value={email}
+                        onInput={e => setEmail(e.target.value)}
+                    />
+                </Field>
+                <Field>
+                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <Input
+                        id="password"
+                        className="border rounded p-2"
+                        type="password"
+                        name="password"
+                        autoComplete="password"
+                        placeholder="Password"
+                        required
+                        value={password}
+                        onInput={e => setPassword(e.target.value)}
+                    />
+                </Field>
+                <Field>
+                    <Button type="submit">Login</Button>
+                    <FieldDescription className="text-center">
+                        Don&apos;t have an account?
+                        <Link href="/register"> Sign up</Link>
+                    </FieldDescription>
+                </Field>
 
-            <input
-                className="border rounded p-2"
-                type="email"
-                name="email"
-                autoComplete="email"
-                placeholder="Email"
-                value={email}
-                onInput={e => setEmail(e.target.value)}
-            />
-
-            <input
-                className="border rounded p-2"
-                type="password"
-                name="password"
-                autoComplete="password"
-                placeholder="Password"
-                value={password}
-                onInput={e => setPassword(e.target.value)}
-            />
-
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-
-            <button className="bg-blue-600 text-white rounded p-2" type="submit">
-                Login
-            </button>
+                <Field>
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                </Field>
+            </FieldGroup>
         </form>
     );
 }
