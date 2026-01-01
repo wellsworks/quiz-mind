@@ -1,6 +1,7 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/Card";
+import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
 
 export default function FlashcardView({ 
     flashcard 
@@ -14,18 +15,32 @@ export default function FlashcardView({
         } 
     }) 
     {
+    const [isFlipped, setIsFlipped] = useState(false)
+
+    const handleFlip = () => setIsFlipped(!isFlipped)
 
     return (
-        <Card className="space-y-3">
-            <CardHeader>
-                <CardTitle>{flashcard.question}</CardTitle>
-            </CardHeader>
-
-            <CardContent>
-                <p className="line-clamp-3 text-sm text-foreground/70">
-                {flashcard.answer}
-                </p>
-            </CardContent>
-        </Card>
-    );
+        <div>
+            <Card 
+                className="w-full max-w-sm h-60 bg-secondary text-card-foreground hover:bg-secondary/20" 
+                onClick={handleFlip}
+            >
+                {(!isFlipped) && (
+                    <CardContent className="flex items-center justify-center h-full p-6 relative">
+                        <div className="absolute inset-0 flex items-center justify-center p-6">
+                            <p className="text-lg font-semibold">{flashcard.question}</p>
+                        </div>
+                    </CardContent>
+                )}
+                
+                {(isFlipped) && (
+                    <CardContent className="flex items-center justify-center h-full p-6 relative">
+                        <div className="absolute inset-0 flex items-center justify-center p-6">
+                            <p className="text-lg font-semibold">{flashcard.answer}</p>
+                        </div>
+                    </CardContent>
+                )}
+            </Card>
+        </div>
+    )
 }
