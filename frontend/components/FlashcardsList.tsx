@@ -6,6 +6,15 @@ import { Grid } from "./Grid";
 import { ButtonGroup } from "./ui/button-group";
 import FlashcardDeleteDialog from "./FlashcardDeleteDialog";
 import FlashcardEditForm from "./FlashcardEditForm";
+import { WalletCards } from "lucide-react";
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from "@/components/ui/empty";
+import { Skeleton } from "./ui/skeleton";
 
 export default function FlashcardList({ noteId }: { noteId: number }) {
     const id = String(noteId);
@@ -13,7 +22,15 @@ export default function FlashcardList({ noteId }: { noteId: number }) {
     const flashcards = data || [];
 
     if (isLoading) {
-        return <div className="text-sm text-foreground/60">Loading flashcards...</div>;
+        return (
+            <div className="flex flex-col space-y-2">
+                <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                </div>
+            </div>
+        );
     }
 
     if (isError) {
@@ -26,10 +43,19 @@ export default function FlashcardList({ noteId }: { noteId: number }) {
 
     if (!flashcards || flashcards.length === 0) {
         return (
-            <div className="text-sm text-foreground/60">
-                No flashcards yet.
-                Click <strong>Create Flashcard</strong> to begin.
-            </div>
+            <Empty>
+                <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                        <WalletCards />
+                    </EmptyMedia>
+                    <EmptyTitle>No Flashcards Yet</EmptyTitle>
+                    <EmptyDescription>
+                        You haven&apos;t created any flashcards yet. 
+                        Click <strong>Generate AI Flashcards</strong>,
+                        or <strong>Add flashcard</strong> to get started.
+                    </EmptyDescription>
+                </EmptyHeader>
+            </Empty>
         );
     }
     
