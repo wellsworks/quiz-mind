@@ -33,48 +33,50 @@ export default function Navbar() {
     };
 
     return (
-        <NavigationMenu className="bg-background text-foreground">
+        <nav>
+            <NavigationMenu className="bg-background text-foreground">
 
-            <div className="flex items-center justify-between py-4 px-4">
-            <NavigationMenuList className="flex-row items-center space-x-4 text-sm">
+                <div className="flex items-center justify-between py-4 px-4">
+                <NavigationMenuList className="flex-row items-center space-x-4 text-sm">
 
-                <NavigationMenuItem>
-                    <Link href="/dashboard" className="flex-row items center gap-2 hover:bg-background/50">
-                        Dashboard
-                    </Link>
-                </NavigationMenuItem>
-                <Separator orientation="vertical" />
+                    <NavigationMenuItem>
+                        <Link href="/dashboard" className="flex-row items center gap-2 hover:bg-background/50">
+                            Dashboard
+                        </Link>
+                    </NavigationMenuItem>
+                    <Separator orientation="vertical" />
 
-                <NavigationMenuItem>
-                    <Link href="/notes" className="flex-row items center gap-2"> 
-                        Notes
-                    </Link>
-                </NavigationMenuItem>
-                <Separator orientation="vertical" />
+                    <NavigationMenuItem>
+                        <Link href="/notes" className="flex-row items center gap-2"> 
+                            Notes
+                        </Link>
+                    </NavigationMenuItem>
+                    <Separator orientation="vertical" />
 
-                <NavigationMenuItem asChild>
-                    <Button
-                        size="default"
-                        type="button"
-                        variant="ghost"
-                        onClick={handleLogout}
-                    >
-                        Logout <LogOut />
-                    </Button>
-                </NavigationMenuItem>
-                <Separator orientation="vertical" />
+                    <NavigationMenuItem asChild>
+                        <Button
+                            size="default"
+                            type="button"
+                            variant="ghost"
+                            onClick={handleLogout}
+                        >
+                            Logout <LogOut />
+                        </Button>
+                    </NavigationMenuItem>
+                    <Separator orientation="vertical" />
 
-                <NavigationMenuItem asChild>
-                    <Toggle 
-                        size="default" 
-                        aria-label="Toggle Theme"
-                        onClick={toggleTheme}
-                    >
-                        {theme === "dark" ? <Sun /> : <Moon />} 
-                    </Toggle>
-                </NavigationMenuItem>        
-            </NavigationMenuList>
-            </div>
-        </NavigationMenu>
+                    <NavigationMenuItem asChild>
+                        <Toggle 
+                            size="default" 
+                            aria-label="Toggle Theme"
+                            onClick={toggleTheme}
+                        >
+                            {theme === "dark" ? <Sun /> : <Moon />} 
+                        </Toggle>
+                    </NavigationMenuItem>        
+                </NavigationMenuList>
+                </div>
+            </NavigationMenu>
+        </nav>
     );
 }
