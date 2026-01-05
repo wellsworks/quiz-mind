@@ -18,22 +18,25 @@ export default async function DashboardPage() {
                 title="Dashboard"
                 description="Review your study data"
             />
-            <Separator className="my-4" />
+            <main>
+                <Separator className="my-4" />
 
-            <div className="space-y-4">
-                <p>Logged in as: {user.email}</p>
-                <p>Welcome back!</p>
-            </div>         
-
-            <Section title="Coming Soon:">
                 <div className="space-y-4">
-                    <ul>
-                        <li>Flashcard testing</li>
-                        <li>AI generated Quizzes</li>
-                        <li>Progress tracking</li>
-                    </ul>
-                </div>
-            </Section>  
+                    <p>Logged in as: {user.email}</p>
+                    <p>Welcome back!</p>
+                </div>         
+            </main>
+            <footer>
+                <Section title="Coming Soon:">
+                    <div className="space-y-4">
+                        <ul>
+                            <li>Flashcard testing</li>
+                            <li>AI generated Quizzes</li>
+                            <li>Progress tracking</li>
+                        </ul>
+                    </div>
+                </Section> 
+            </footer> 
         </Container>
     );
 }
