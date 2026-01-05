@@ -75,7 +75,7 @@ export default function FlashcardEditForm({
             <PopoverContent className="max-w-sm" align="start">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
 
-                    <h4 className="leading-none font-medium">Edit Flashcard</h4>
+                    <h3 className="leading-none font-medium">Edit Flashcard</h3>
                         <p className="text-muted-foreground text-sm">
                             Make changes to your flashcard here. Click save when you&apos;re done.
                         </p>

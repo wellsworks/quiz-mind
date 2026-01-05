@@ -67,7 +67,7 @@ export function FlashcardCreatePopover({ note_id }: { note_id?: number }) {
             <PopoverContent className="max-w-sm" side="bottom">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
 
-                    <h4 className="leading-none font-medium">Create a flashcard</h4>
+                    <h3 className="leading-none font-medium">Create a flashcard</h3>
                         <p className="text-muted-foreground text-sm">
                             Add a new flashcard here. Click save when you&apos;re done.
                         </p>
