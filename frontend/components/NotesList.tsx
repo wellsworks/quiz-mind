@@ -58,13 +58,13 @@ export default function NotesList() {
     return (
         <Grid>
             {notes.map((note) => (
-                <div key={note.id} className="space-y-2">
-                    <Link 
-                        href={`/notes/${note.id}`} 
-                    >
-                        <NoteView note={note} />
-                    </Link>
-                </div>
+                <Link 
+                    key={note.id}
+                    className="space-y-2 focus-visible:border-ring focus-visible:ring-ring/50"
+                    href={`/notes/${note.id}`} 
+                >
+                    <NoteView note={note} />
+                </Link>
             ))}
         </Grid>
     );
