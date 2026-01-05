@@ -22,17 +22,19 @@ export default async function NotesPage({ params }: { params: { id: string }}) {
                 title="Your Notes"
                 description="Create and study notes to learn faster."
             />
-            <Separator className="my-4" />
-
-            <div className="flex items-center justify-between">
-                <NoteCreateForm />
-            </div>    
-
-            <Section title={"All Notes"}>
-                <div className="flex-items-center justify-betwen">
-                    <NotesList />
-                </div>
-            </Section>      
+            <main>
+                <Separator className="my-4" />
+                <div className="flex items-center justify-between">
+                    <NoteCreateForm />
+                </div>    
+            </main>  
+            <footer>
+                <Section title={"All Notes"}>
+                    <div className="flex-items-center justify-betwen">
+                        <NotesList />
+                    </div>
+                </Section>  
+            </footer>
         </Container>
     );
 
