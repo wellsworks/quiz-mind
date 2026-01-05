@@ -63,7 +63,12 @@ export default function NoteEditForm({ note }: { note?: { id: number; title: str
         >
 
             <DialogTrigger asChild>
-                <Button variant="default" type="button" size="icon-sm">
+                <Button 
+                    variant="default" 
+                    type="button" 
+                    size="icon-sm"
+                    aria-label="Edit note"
+                >
                     <SquarePen/>
                 </Button>
             </DialogTrigger>

@@ -43,7 +43,12 @@ export default function NoteDeleteDialog({ noteId }: { noteId: string; }) {
     return (
         <AlertDialog> 
             <AlertDialogTrigger asChild>
-                <Button variant="destructive" type="button" size="icon-sm">
+                <Button 
+                    variant="destructive" 
+                    type="button" 
+                    size="icon-sm"
+                    aria-label="Delete note"
+                >
                     <Trash2/>
                 </Button>
             </AlertDialogTrigger>

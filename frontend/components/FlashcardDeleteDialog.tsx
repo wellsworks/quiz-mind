@@ -43,7 +43,12 @@ export default function FlashcardDeleteDialog({ flashcardId, initialData }: { fl
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>                
-                <Button variant="destructive" type="button" size="sm">
+                <Button 
+                    variant="destructive" 
+                    type="button" 
+                    size="sm"
+                    aria-label="Delete flashcard"
+                >
                     <Trash2 />
                 </Button>
             </AlertDialogTrigger>

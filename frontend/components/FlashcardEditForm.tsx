@@ -67,7 +67,12 @@ export default function FlashcardEditForm({
         >
             
             <PopoverTrigger asChild>
-                <Button variant="default" type="button" size="sm">
+                <Button 
+                    variant="default" 
+                    type="button" 
+                    size="sm"
+                    aria-label="Edit flashcard"
+                >
                     <SquarePen/>
                 </Button>
             </PopoverTrigger>
