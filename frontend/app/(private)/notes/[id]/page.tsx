@@ -27,33 +27,36 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
                 title="Note Details"
                 description="Review and edit this note."
             />
-            <Separator className="my-4" />
-            <NoteDetailView note={note} />
-            <Separator className="my-4" />
-            <div className="flex gap-2">
-                <div className="flex justify-start gap-2">
-                        <div className="grid gap-2">
-                            <div className="mx-auto">
+            <main>
+                <Separator className="my-4" />
+                <NoteDetailView note={note} />
+                <Separator className="my-4" />
+                <div className="flex gap-2">
+                    <div className="flex justify-start gap-2">
+                            <div className="grid gap-2">
+                                <div className="mx-auto">
+                                    <ButtonGroup>
+                                        <NoteEditForm note={note}/>
+                                        <NoteDeleteDialog noteId={id}/>
+                                    </ButtonGroup>
+                                </div>
                                 <ButtonGroup>
-                                    <NoteEditForm note={note}/>
-                                    <NoteDeleteDialog noteId={id}/>
+                                    <FlashcardCreatePopover note_id={noteId}/>
                                 </ButtonGroup>
                             </div>
-                            <ButtonGroup>
-                                <FlashcardCreatePopover note_id={noteId}/>
-                            </ButtonGroup>
-                        </div>
+                    </div>
+                    <div className="flex justify-end">
+                        <GenerateCard noteId={id}/>
+                    </div>
                 </div>
-                <div className="flex justify-end">
-                    <GenerateCard noteId={id}/>
-                </div>
-            </div>
-
-            <Section title="Flashcards for this note">
-                <div className="w-full">
-                    <FlashcardList noteId={noteId}/>
-                </div>
-            </Section>
+            </main>
+            <footer>
+                <Section title="Flashcards for this note">
+                    <div className="w-full">
+                        <FlashcardList noteId={noteId}/>
+                    </div>
+                </Section>
+            </footer>
         </Container>
     );
 }
