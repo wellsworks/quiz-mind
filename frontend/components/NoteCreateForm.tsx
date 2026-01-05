@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group"
+import { Label } from './ui/label';
 
 export default function NoteCreateForm() {
     const [title, setTitle] = useState("");
@@ -70,7 +71,9 @@ export default function NoteCreateForm() {
 
                     <div className="grid gap-4">
                         <div className="grid gap-3 max-w-xs">
+                            <Label htmlFor="note title">Title: </Label>
                             <Input
+                                id="note title"
                                 type="text"
                                 required
                                 placeholder="Note title"
@@ -80,8 +83,10 @@ export default function NoteCreateForm() {
                         </div>
                         <div className="grid gap-3">
                             <div className="grid w-full min-w-full gap-4">
+                                <Label htmlFor="note content">Note content: </Label>
                                 <InputGroup>
                                     <InputGroupTextarea
+                                        id="note content"
                                         required
                                         placeholder="Write your note here"
                                         className="min-h-[400px]"
