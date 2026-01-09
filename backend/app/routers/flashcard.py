@@ -1,6 +1,6 @@
 # routers/flashcard.py
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.db import get_db
 from app.schemas.flashcard import FlashcardCreate, FlashcardOut, FlashcardUpdate
@@ -35,10 +35,26 @@ def get_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_user
         raise HTTPException(status_code=403, detail="Not authorized to access this flashcard")
     return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
 
+
 @router.get("/", response_model=list[FlashcardOut])
-def list_flashcards(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    flashcards = db.query(Flashcard).join(Note).filter(Note.user_id == current_user.id).all()
+def list_flashcards(
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user),
+    note_id_list: list[int] | None = Query(default=None),
+):
+    query = (
+        db.query(Flashcard)
+        .join(Note)
+        .filter(Note.user_id == current_user.id)
+    )
+
+    if note_id_list:
+        query = query.filter(Flashcard.note_id.in_(note_id_list))
+    
+    flashcards = query.all()
+    
     return [FlashcardOut.model_validate(fc, from_attributes=True) for fc in flashcards]
+
 
 @router.put("/{flashcard_id}", response_model=FlashcardOut)
 def update_flashcard(
@@ -89,4 +105,3 @@ def delete_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_u
     db.delete(db_flashcard)
     db.commit()
     return {"detail": "Flashcard deleted"}
-
