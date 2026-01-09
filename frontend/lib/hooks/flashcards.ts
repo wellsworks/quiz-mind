@@ -11,6 +11,7 @@ import {
     startFlashcardGeneration,
     getAIJobById,
     getAIFlashcardJobByNote,
+    getStudyFlashcards,
 } from "@/lib/api";
 
 const FLASH_KEY = ["flashcards"];
@@ -35,6 +36,14 @@ export function useFlashcardsByNoteId(noteId: string) {
         queryKey: [...FLASH_KEY, noteId],
         queryFn: () => getFlashcardsByNoteId(noteId),
         enabled: !!noteId,
+    });
+}
+
+export function useStudyFlashcards(noteIdList: number[]) {
+    return useQuery({
+        queryKey: [...FLASH_KEY, noteIdList],
+        queryFn: () => getStudyFlashcards(noteIdList),
+        enabled: !!noteIdList,
     });
 }
 
