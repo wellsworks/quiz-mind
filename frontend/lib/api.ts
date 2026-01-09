@@ -96,6 +96,22 @@ export async function getFlashcardsByNoteId(noteId: string) {
     return request(`/notes/${noteId}/flashcards`, { method: "GET" });
 }
 
+export async function getStudyFlashcards(noteIdList: number[]) {
+    if (!noteIdList.length) {
+        return request("/flashcards", { method: "GET" });
+    } else {
+        let path = "?";
+        for (let i = 0; i < noteIdList.length; i++) {
+            if (i === noteIdList.length - 1) {
+                path += `note_id_list=${String(noteIdList[i])}`;
+            } else {
+                path += `note_id_list=${String(noteIdList[i])}&`
+            }
+        }
+        return request(`/flashcards${path}`, { method: "GET" });
+    }
+}
+
 export async function createFlashcard(payload: { question: string; answer: string; note_id: number; source: string }) {
     return request("/flashcards/", {
         method: "POST",
