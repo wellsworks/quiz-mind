@@ -3,12 +3,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db import get_db
-from app.schemas.note import NoteCreate, NoteOut, NoteUpdate
+from app.schemas.note import NoteCreate, NoteOut, NoteUpdate, NoteSummary
 from app.models.note import Note
 from app.models.user import User
 from app.deps import get_current_user
 from app.schemas.flashcard import FlashcardOut
 from app.models.flashcard import Flashcard
+from app.util.notes import get_notes_with_flashcard_counts
 
 router = APIRouter(prefix="/notes", tags=["notes"])
 
@@ -19,6 +20,14 @@ def create_note(note: NoteCreate, db: Session = Depends(get_db), current_user: U
     db.commit()
     db.refresh(new_note)
     return NoteOut.model_validate(new_note, from_attributes=True)
+
+@router.get("/summary", response_model=list[NoteSummary])
+def list_note_summaries(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    note_summaries = get_notes_with_flashcard_counts(db, user.id)
+    return [NoteSummary.model_validate(note, from_attributes=True) for note in note_summaries]
 
 @router.get("/{note_id}", response_model=NoteOut)
 def get_note(note_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
