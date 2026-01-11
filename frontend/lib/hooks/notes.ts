@@ -7,6 +7,7 @@ import {
     createNote,
     updateNote,
     deleteNote,
+    getNoteSummaries
 } from "@/lib/api";
 
 const NOTES_KEY = ["notes"];
@@ -15,6 +16,13 @@ export function useNotes() {
     return useQuery({
         queryKey: NOTES_KEY,
         queryFn: getNotes,
+    });
+}
+
+export function useNoteSummaries() {
+    return useQuery({
+        queryKey: NOTES_KEY,
+        queryFn: getNoteSummaries,
     });
 }
 
