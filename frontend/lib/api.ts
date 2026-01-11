@@ -66,6 +66,10 @@ export async function getNoteById(id: string) {
     return request(`/notes/${id}`, { method: "GET" });
 }
 
+export async function getNoteSummaries() {
+    return request("/notes/summary", { method: "GET" });
+}
+
 export async function createNote(payload: { title: string; content: string }) {
     return request("/notes/", { method: "POST", body: JSON.stringify(payload) });
 }
