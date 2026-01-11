@@ -13,6 +13,10 @@ class NoteCreate(NoteBase):
 class NoteUpdate(NoteBase):
     pass
 
+class NoteSummary(NoteBase):
+    id: int
+    flashcard_count: int
+
 class NoteOut(NoteBase):
     id: int
     user_id: int
