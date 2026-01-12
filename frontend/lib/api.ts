@@ -5,7 +5,7 @@ import { LoginResponse } from "./types";
 export const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // Utility function
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     
     const res = await fetch(`${BASE_URL}${path}`, {
         ...options,
