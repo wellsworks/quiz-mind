@@ -19,14 +19,17 @@ export default function FlashcardReview({ noteIdList }: { noteIdList: number[] }
     const [flashcards, setFlashcards] = useState([]);
     const { data, isLoading, isError } = useStudyFlashcards(noteIdList);
 
-
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
     const [count, setCount] = useState(0);
 
+    function shuffle(cards: []) {
+        return [...cards].sort(() => Math.random() - 0.5)
+    }
+
     useEffect(() => {
         if (data) {
-            setFlashcards(data.flat());
+            setFlashcards(shuffle(data.flat()));
         }
     }, [data]);
 
