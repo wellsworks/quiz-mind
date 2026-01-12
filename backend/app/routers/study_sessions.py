@@ -8,6 +8,7 @@ from app.models.study_sessions import StudySession
 from app.deps import get_current_user
 from app.models.user import User
 from datetime import datetime, timezone
+from sqlalchemy import func
 
 router = APIRouter(prefix="/study-sessions", tags=["study_sessions"])
 
@@ -16,10 +17,15 @@ def create_study_session(
     session: StudySessionCreate, 
     db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user),
-):    
-    if session.scope == "note" and not session.note_id:
-        raise HTTPException(status_code=400, detail="note_id required for note scope")
-    
+):  
+    db.query(StudySession).filter(
+        StudySession.user_id == current_user.id,
+        StudySession.ended_at.is_(None)
+    ).update(
+        {"ended_at": func.now()},
+        synchronize_session=False
+    )
+
     new_session = StudySession(
         user_id=current_user.id,
         mode=session.mode,
