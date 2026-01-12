@@ -26,8 +26,12 @@ import React, { useState } from "react";
 
 export default function NoteSelect({
     onStart,
+    setAllScope,
+    onConfirm,
 }: {
-    onStart: (noteIds: number[]) => void;
+    onStart: () => void;
+    setAllScope: (scope: boolean) => void;
+    onConfirm: (noteIds: number[]) => void;
 }) {
     const { data: notes = [], isLoading, isError } = useNoteSummaries();
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -38,6 +42,8 @@ export default function NoteSelect({
         label: note.title,
         disabled: note.flashcard_count > 0 ? false : true
     }))
+
+    const allScope = items.length === selectedIds.length ? true : false;
     
 
     if (isLoading) {
@@ -62,7 +68,11 @@ export default function NoteSelect({
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        onStart(selectedIds)
+        if (allScope) {
+            setAllScope(allScope);
+        } 
+        onStart()
+        onConfirm(selectedIds)
         setOpen(false)
     }
 
