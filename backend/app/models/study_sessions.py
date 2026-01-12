@@ -20,3 +20,4 @@ class StudySession(Base):
 
     # Relationships
     user = relationship("User", back_populates="study_sessions")
+    study_session_notes = relationship("StudySessionNote", cascade="all, delete-orphan")
