@@ -7,6 +7,11 @@ import { Label } from "./label"
 import { cn } from "@/lib/utils"
 import { CheckIcon, MinusIcon } from "lucide-react"
 import { CommandItem } from "./command"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type CheckboxTreeProps = {
   parent: string;
@@ -118,18 +123,29 @@ function CheckboxTree({
                 name={item.label}
                 checked={selectedIds.includes(item.id)}
                 disabled={item.disabled}
+                aria-disabled={item.disabled}
                 onCheckedChange={checked =>
                   toggleChild(item.id, Boolean(checked))
                 }
               />
-              <Label 
-                className={cn(
-                  item.disabled && "text-muted-foreground cursor-not-allowed"
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Label 
+                    className={cn(
+                    item.disabled && "text-muted-foreground cursor-not-allowed"
+                    )}
+                    htmlFor={item.label}
+                  >
+                    {item.label}
+                  </Label>
+                </TooltipTrigger>
+
+                {item.disabled && (
+                  <TooltipContent>
+                    <p>No flashcards yet. Generate flashcards to study this note.</p>
+                  </TooltipContent>
                 )}
-                htmlFor={item.label}
-              >
-                {item.label}
-              </Label>
+              </Tooltip>
             </CommandItem>
           </div>
         ))}
