@@ -53,6 +53,13 @@ export default function Navbar() {
                     </NavigationMenuItem>
                     <Separator orientation="vertical" />
 
+                    <NavigationMenuItem>
+                        <Link href="/study" className="flex-row items center gap-2"> 
+                            Study
+                        </Link>
+                    </NavigationMenuItem>
+                    <Separator orientation="vertical" />
+
                     <NavigationMenuItem asChild>
                         <Button
                             size="default"
