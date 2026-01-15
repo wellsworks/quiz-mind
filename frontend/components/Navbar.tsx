@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useUser, useLogout } from "@/lib/auth";
+import { useUser, useLogout } from "@/lib/hooks/auth";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/ui";
 import {
