@@ -1,21 +1,9 @@
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
+import { auth } from "./auth";
 
 export default async function getCurrentUserSSR() {
-    const cookieStore = await cookies();
-    const cookie = cookieStore.get("access_token");
-
-    if (!cookie) return null;
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-            Cookie: `access_token=${cookie.value}`,
-        },
-        cache: "no-store",
+    const session = await auth.api.getSession({
+        headers: await headers()
     });
-
-    if (!res.ok) return null;
-
-    return res.json();
+    return session?.user;
 }
