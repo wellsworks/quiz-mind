@@ -1,4 +1,3 @@
-import { log } from "console";
 import { NextResponse, NextRequest } from "next/server";
 
 const protectedPrefixes = [
@@ -16,7 +15,7 @@ const publicPrefixes = [
 ];
 
 export default function proxy(req: NextRequest) {
-    const cookie = req.cookies.get("access_token");
+    const cookie = req.cookies.get("better-auth.session_token");
     const { pathname } = req.nextUrl;
 
     const isProtected = protectedPrefixes.some(prefix => 
