@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { apiRegister } from "@/lib/api";
-import { useMutation } from "@tanstack/react-query";
+import { useRegister } from "@/lib/hooks/auth";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -18,28 +17,27 @@ import Link from "next/link";
 export default function RegisterForm() {
     const router = useRouter();
 
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    const registerMutation = useMutation({
-        mutationFn: (payload: { email: string; password: string }) =>
-            apiRegister(payload),
-
-        onSuccess: () => {
-            router.push("/login");
-        },
-
-        onError: (err: any) => {
-            setError(err.message || "Registration failed")
-        },
-    });
+    const register = useRegister();
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
 
-        registerMutation.mutate({ email, password });
+        register.mutate({ name, email, password },
+            {
+                onSuccess: () => {
+                    router.push("/dashboard");
+                },
+                onError: (err: any) => {
+                    setError(err.message || "Registration failed")
+                },
+            }
+        );
     }
 
     return (
@@ -51,6 +49,20 @@ export default function RegisterForm() {
                         Enter your email and password to sign up
                     </p>
                 </div>
+                <Field>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input
+                        id="name"
+                        className="border rounded p-2"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        placeholder="My Name"
+                        required
+                        value={name}
+                        onInput={e => setName(e.target.value)}
+                    />
+                </Field>
                 <Field>
                     <FieldLabel htmlFor="email">Email</FieldLabel>
                     <Input
