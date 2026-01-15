@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { apiLogin } from "@/lib/api";
-import { useMutation } from "@tanstack/react-query";
-import { useAuthStore } from "@/store/ui";
+import { useLogin } from "@/lib/hooks/auth";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -15,38 +12,26 @@ import {
 } from "@/components/ui/field";
 import { Input } from "./ui/input";
 import Link from "next/link";
+import { Checkbox } from "./ui/checkbox";
 
 export default function LoginForm() {
-    const setUser = useAuthStore((s) => s.setUser);
-    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [remember, setRemember] = useState(false);
     const [error, setError] = useState("");
 
-    const loginMutation = useMutation({
-        mutationFn: (payload: { email: string; password: string }) =>
-            apiLogin(payload),
-
-        onSuccess: (user) => {
-            setUser(user);
-            router.push("/dashboard");
-        },
-
-        onError: (err: any) => {
-            setError(err.message || "Login failed");
-        },
-    });
+    const login = useLogin();
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");
-
-        if (!email || !password) {
-            setError("Email and password are required");
-            return;
-        }
-
-        loginMutation.mutate({ email, password });
+        login.mutate({ email, password, remember },
+            {
+                onError: (err: any) => {
+                    setError(err.message || "Login failed");
+                }
+            }
+        );
     }
 
     return (
@@ -55,7 +40,7 @@ export default function LoginForm() {
                 <div className="flex flex-col items-center gap-2 text-center">
                     <h1 className="text-2xl font-bold">Login to your account</h1>
                     <p className="text-muted-foreground text-sm text-balance">
-                        Enter your email below to login to your account
+                        Enter your information below to login to your account
                     </p>
                 </div>
                 <Field>
@@ -85,6 +70,14 @@ export default function LoginForm() {
                         value={password}
                         onInput={e => setPassword(e.target.value)}
                     />
+                </Field>
+                <Field orientation="horizontal">
+                    <Checkbox
+                        id="remember-me"
+                        name="remember-me"
+                        onCheckedChange={() => setRemember}
+                    />
+                    <FieldLabel htmlFor="remember-me">Remember Me</FieldLabel>
                 </Field>
                 <Field>
                     <Button type="submit">Login</Button>
