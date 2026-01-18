@@ -23,7 +23,7 @@ class UserFlashcardProgressUpdate(UserFlashcardProgressBase):
 
 class UserFlashcardProgressOut(UserFlashcardProgressBase):
     id: int
-    user_id: int
+    app_user_id: int
     flashcard_id: int
 
     class Config:

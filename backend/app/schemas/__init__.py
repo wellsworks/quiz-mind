@@ -1,6 +1,6 @@
 # schemas/__init__.py
 
-from .user import UserBase, UserCreate, UserOut
+from .app_user import AppUserBase, AppUserCreate, AppUserOut
 from .note import NoteBase, NoteCreate, NoteUpdate, NoteOut 
 from .flashcard import FlashcardBase, FlashcardCreate, FlashcardUpdate, FlashcardOut
 from .study_sessions import StudySessionBase, StudySessionCreate, StudySessionUpdate, StudySessionOut

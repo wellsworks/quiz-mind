@@ -25,7 +25,7 @@ class StudySessionUpdate(StudySessionBase):
 
 class StudySessionOut(StudySessionBase):
     id: int
-    user_id: int
+    app_user_id: int
     mode: StudyMode
     scope: StudyScope
     note_id: int | None = None

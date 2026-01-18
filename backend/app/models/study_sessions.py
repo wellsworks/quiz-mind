@@ -9,15 +9,15 @@ class StudySession(Base):
     __tablename__ = "study_sessions"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    app_user_id = Column(Integer, ForeignKey("app_users.id"), nullable=False)
     note_id = Column(Integer, ForeignKey("notes.id"), nullable=True)
 
     mode = Column(Enum('flashcards', 'quiz', name='study_mode'), nullable=False, default='flashcards')
     scope = Column(Enum('all', 'note', name='study_scope'), nullable=False, default='all')
 
-    started_at = Column(DateTime, nullable=False, default=func.now())
-    ended_at = Column(DateTime, nullable=True)
+    started_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    ended_at = Column(DateTime(timezone=True), nullable=True)
 
     # Relationships
-    user = relationship("User", back_populates="study_sessions")
+    app_user = relationship("AppUser", back_populates="study_sessions")
     study_session_notes = relationship("StudySessionNote", cascade="all, delete-orphan")

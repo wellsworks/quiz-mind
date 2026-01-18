@@ -19,7 +19,7 @@ class NoteSummary(NoteBase):
 
 class NoteOut(NoteBase):
     id: int
-    user_id: int
+    app_user_id: int
     created_at: datetime
 
     class Config:
