@@ -1,4 +1,3 @@
-import { getNoteByIdServer } from "@/lib/api-server";
 import NoteEditForm from "@/components/NoteEditForm";
 import PageHeader from "@/components/PageHeader";
 import Section from "@/components/Section";
@@ -19,8 +18,6 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
         throw new Error(`Invalid note id: ${id}`);
     }
 
-    const note = await getNoteByIdServer(noteId);
-
     return (
         <Container className="py-10 space-y-6 bg-background text-foreground">
             <PageHeader
@@ -29,14 +26,14 @@ export default async function NoteDetailPage(props: { params: Promise<{ id: stri
             />
             <main>
                 <Separator className="my-4" />
-                <NoteDetailView note={note} />
+                <NoteDetailView noteId={id} />
                 <Separator className="my-4" />
                 <div className="flex gap-2">
                     <div className="flex justify-start gap-2">
                             <div className="grid gap-2">
                                 <div className="mx-auto">
                                     <ButtonGroup>
-                                        <NoteEditForm note={note}/>
+                                        <NoteEditForm noteId={id}/>
                                         <NoteDeleteDialog noteId={id}/>
                                     </ButtonGroup>
                                 </div>
