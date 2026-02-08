@@ -5,19 +5,19 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.schemas.flashcard import FlashcardCreate, FlashcardOut, FlashcardUpdate
 from app.models.flashcard import Flashcard
-from app.models.user import User
+from app.models.app_user import AppUser
 from app.models.note import Note
-from app.deps import get_current_user
+from app.deps import get_current_app_user
 
 router = APIRouter(prefix="/flashcards", tags=["flashcards"])
 
 @router.post("/", response_model=FlashcardOut)
-def create_flashcard(flashcard: FlashcardCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def create_flashcard(flashcard: FlashcardCreate, db: Session = Depends(get_db), current_app_user: AppUser = Depends(get_current_app_user)):
     # Ensure the flashcard's note exists and belongs to the current user
     db_note = db.query(Note).filter(Note.id == flashcard.note_id).first()
     if not db_note:
         raise HTTPException(status_code=404, detail="Associated note not found")
-    if db_note.user_id != current_user.id:
+    if db_note.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to add flashcard to this note")
     new_flashcard = Flashcard(**flashcard.model_dump())
     db.add(new_flashcard)
@@ -26,12 +26,12 @@ def create_flashcard(flashcard: FlashcardCreate, db: Session = Depends(get_db), 
     return FlashcardOut.model_validate(new_flashcard, from_attributes=True)
 
 @router.get("/{flashcard_id}", response_model=FlashcardOut)
-def get_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_app_user: AppUser = Depends(get_current_app_user)):
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
     # Ensure the flashcard belongs to a note owned by the current user
-    if db_flashcard.note.user_id != current_user.id:
+    if db_flashcard.note.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to access this flashcard")
     return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
 
@@ -39,13 +39,13 @@ def get_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_user
 @router.get("/", response_model=list[FlashcardOut])
 def list_flashcards(
     db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user),
+    current_app_user: AppUser = Depends(get_current_app_user),
     note_id_list: list[int] | None = Query(default=None),
 ):
     query = (
         db.query(Flashcard)
         .join(Note)
-        .filter(Note.user_id == current_user.id)
+        .filter(Note.app_user_id == current_app_user.id)
     )
 
     if note_id_list:
@@ -58,14 +58,14 @@ def list_flashcards(
 
 @router.put("/{flashcard_id}", response_model=FlashcardOut)
 def update_flashcard(
-    flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+    flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db), current_app_user: AppUser = Depends(get_current_app_user)
     ):
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
-    if db_flashcard.note.user_id != current_user.id:
+    if db_flashcard.note.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to update this flashcard")
-    user_notes = db.query(Note.id).filter(Note.user_id == current_user.id).all()
+    user_notes = db.query(Note.id).filter(Note.app_user_id == current_app_user.id).all()
     user_note_ids = {note.id for note in user_notes}
     if flashcard.note_id and flashcard.note_id not in user_note_ids:
         raise HTTPException(status_code=403, detail="Not authorized to assign this flashcard to the specified note")
@@ -77,14 +77,14 @@ def update_flashcard(
 
 @router.patch("/{flashcard_id}", response_model=FlashcardOut)
 def partial_update_flashcard(
-    flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+    flashcard_id: int, flashcard: FlashcardUpdate, db: Session = Depends(get_db), current_app_user: AppUser = Depends(get_current_app_user)
     ):
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
-    if db_flashcard.note.user_id != current_user.id:
+    if db_flashcard.note.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to update this flashcard")
-    user_notes = db.query(Note.id).filter(Note.user_id == current_user.id).all()
+    user_notes = db.query(Note.id).filter(Note.app_user_id == current_app_user.id).all()
     user_note_ids = {note.id for note in user_notes}
     if flashcard.note_id and flashcard.note_id not in user_note_ids:
         raise HTTPException(status_code=403, detail="Not authorized to assign this flashcard to the specified note")
@@ -96,11 +96,11 @@ def partial_update_flashcard(
     return FlashcardOut.model_validate(db_flashcard, from_attributes=True)
 
 @router.delete("/{flashcard_id}", response_model=dict)
-def delete_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def delete_flashcard(flashcard_id: int, db: Session = Depends(get_db), current_app_user: AppUser = Depends(get_current_app_user)):
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
-    if db_flashcard.note.user_id != current_user.id:
+    if db_flashcard.note.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this flashcard")
     db.delete(db_flashcard)
     db.commit()
