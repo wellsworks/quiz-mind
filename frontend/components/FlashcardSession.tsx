@@ -6,8 +6,22 @@ import NoteSelect from "@/components/NoteSelect";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useCreateStudySession, useStopStudySession } from "@/lib/hooks/study_session";
+import { useNotes } from "@/lib/hooks/notes";
+import { Skeleton } from "./ui/skeleton";
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from "@/components/ui/empty";
+import { NotebookText } from "lucide-react";
+import Link from "next/link";
 
 export default function FlashcardSession() {
+    const { data, isLoading, isError } = useNotes();
+    const notes = data;
+
     const [noteIdList, setNoteIdList] = useState<number[]>([]) 
     
     const [allScope, setAllScope] = useState(false);
@@ -45,6 +59,44 @@ export default function FlashcardSession() {
     }, [session?.id])
 
 
+    if (isLoading) {
+        return (
+            <div className="flex flex-col space-y-2">
+                <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                </div>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="text-red-500 text-sm">
+                Something went wrong. Try refreshing the page.
+            </div>
+        );
+    }
+
+    if (!notes || notes.length === 0) {
+        return (
+            <Empty>
+                <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                        <NotebookText />
+                    </EmptyMedia>
+                    <EmptyTitle>No Notes Yet</EmptyTitle>
+                    <EmptyDescription>
+                        You haven&apos;t created any notes yet. 
+                        Add some <Link href="/notes"><strong>Notes</strong></Link> to start studying.
+                    </EmptyDescription>
+                </EmptyHeader>
+            </Empty>
+        )
+    }
+
+    
     return (
         <Card>
             <CardContent>
