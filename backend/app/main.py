@@ -1,10 +1,10 @@
 # app/main.py
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from sqlalchemy.orm import Session
 from app.db import get_db
 from sqlalchemy import text
-from app.routers import user, note, flashcard, study_sessions, auth, ai_flashcards, ai_jobs
+from app.routers import user, note, flashcard, study_sessions, ai_flashcards, ai_jobs
 import logging
 import os
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,12 +32,12 @@ app.include_router(user.router)
 app.include_router(note.router)
 app.include_router(flashcard.router)
 app.include_router(study_sessions.router)
-app.include_router(auth.router)
 app.include_router(ai_flashcards.router)
 app.include_router(ai_jobs.router)
 
-@app.get("/")
-def health_check(db: Session = Depends(get_db)):
-    result = db.execute(text("SELECT 1")).scalar()
-    return {"db_ok": result == 1}
-
+@app.get("/debug")
+def debug(request: Request):
+    return {
+        "cookies": request.cookies,
+        "headers": dict(request.headers)
+    }
