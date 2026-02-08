@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db import get_db
 from app.util.ai_flashcard_jobs import get_flashcard_job
-from app.deps import get_current_user
+from app.deps import get_current_app_user
 
 router = APIRouter(prefix="/ai/jobs", tags=["AI Jobs"])
 
@@ -10,9 +10,9 @@ router = APIRouter(prefix="/ai/jobs", tags=["AI Jobs"])
 def get_job_status(
     job_id: int,
     db: Session = Depends(get_db),
-    user=Depends(get_current_user),
+    app_user=Depends(get_current_app_user),
 ): 
-    job = get_flashcard_job(db, job_id, user.id)
+    job = get_flashcard_job(db, job_id, app_user.id)
     if not job:
         raise HTTPException(status_code=404)
 
