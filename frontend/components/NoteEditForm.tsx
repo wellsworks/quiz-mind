@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useUpdateNote } from "@/lib/hooks/notes";
+import { useUpdateNote, useNoteById } from "@/lib/hooks/notes";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -19,7 +19,10 @@ import { toast } from "sonner";
 import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group"
 import { Label } from "./ui/label";
 
-export default function NoteEditForm({ note }: { note?: { id: number; title: string; content: string }}) {
+export default function NoteEditForm({ noteId }: { noteId: string }) {
+    const { data, isLoading, isError } = useNoteById(noteId);
+    const note = data;
+
     const [id, setId] = useState(note ? String(note.id) : "");
     const [title, setTitle] = useState(note ? note.title : "");
     const [content, setContent] = useState(note ? note.content : "");
