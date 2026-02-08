@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.schemas.study_sessions import StudySessionCreate, StudySessionOut, StudySessionUpdate
 from app.models.study_sessions import StudySession
-from app.deps import get_current_user
-from app.models.user import User
+from app.deps import get_current_app_user
+from app.models.app_user import AppUser
 from datetime import datetime, timezone
 from sqlalchemy import func
 
@@ -16,10 +16,10 @@ router = APIRouter(prefix="/study-sessions", tags=["study_sessions"])
 def create_study_session(
     session: StudySessionCreate, 
     db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user),
+    current_app_user: AppUser = Depends(get_current_app_user),
 ):  
     db.query(StudySession).filter(
-        StudySession.user_id == current_user.id,
+        StudySession.app_user_id == current_app_user.id,
         StudySession.ended_at.is_(None)
     ).update(
         {"ended_at": func.now()},
@@ -27,7 +27,7 @@ def create_study_session(
     )
 
     new_session = StudySession(
-        user_id=current_user.id,
+        app_user_id=current_app_user.id,
         mode=session.mode,
         scope=session.scope,
         note_id=session.note_id,
@@ -43,12 +43,12 @@ def create_study_session(
 def end_study_session(
     session_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_app_user: AppUser = Depends(get_current_app_user),
 ):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
-    if db_session.user_id != current_user.id:
+    if db_session.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to update this study session")
     
     db_session.ended_at = datetime.now(timezone.utc)
@@ -61,12 +61,12 @@ def end_study_session(
 def get_study_session(
     session_id: int, 
     db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user),
+    current_app_user: AppUser = Depends(get_current_app_user),
 ):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
-    if db_session.user_id != current_user.id:
+    if db_session.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to access this study session")
     return StudySessionOut.model_validate(db_session, from_attributes=True)
 
@@ -74,9 +74,9 @@ def get_study_session(
 @router.get("/", response_model=list[StudySessionOut])
 def list_study_sessions(
     db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user),
+    current_app_user: AppUser = Depends(get_current_app_user),
 ):
-    sessions = db.query(StudySession).filter(StudySession.user_id == current_user.id).all()
+    sessions = db.query(StudySession).filter(StudySession.app_user_id == current_app_user.id).all()
     return [StudySessionOut.model_validate(session, from_attributes=True) for session in sessions]
 
 
@@ -85,12 +85,12 @@ def update_study_session(
     session_id: int, 
     session: StudySessionUpdate, 
     db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user),
+    current_app_user: AppUser = Depends(get_current_app_user),
 ):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
-    if db_session.user_id != current_user.id:
+    if db_session.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to update this study session")
     for key, value in session.model_dump().items():
         setattr(db_session, key, value)
@@ -105,12 +105,12 @@ def partial_update_study_session(
     session_id: int, 
     session: StudySessionUpdate, 
     db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user),
+    current_app_user: AppUser = Depends(get_current_app_user),
 ):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
-    if db_session.user_id != current_user.id:
+    if db_session.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to update this study session")
     for key, value in session.model_dump(exclude_unset=True).items():
         setattr(db_session, key, value)
@@ -124,12 +124,12 @@ def partial_update_study_session(
 def delete_study_session(
     session_id: int, 
     db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user),
+    current_app_user: AppUser = Depends(get_current_app_user),
 ):
     db_session = db.query(StudySession).filter(StudySession.id == session_id).first()
     if not db_session:
         raise HTTPException(status_code=404, detail="Study session not found")
-    if db_session.user_id != current_user.id:
+    if db_session.app_user_id != current_app_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this study session")
     
     db.delete(db_session)
