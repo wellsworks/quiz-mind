@@ -34,28 +34,6 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
     return (data ?? {}) as T;
 }
 
-// Auth Endpoints
-export function apiLogin(payload: { email: string; password: string }) {
-    return request<LoginResponse>("/auth/login", {
-        method: "POST",
-        body: JSON.stringify(payload),
-    });
-}
-
-export function apiRegister(payload: { email: string; password: string }) {
-    return request("/auth/register", {
-        method: "POST", 
-        body: JSON.stringify(payload),
-    });
-}
-
-export function getCurrentUser() {
-    return request("/users/me", { method: "GET" });
-}
-
-export function apiLogout() {
-    return request("/auth/logout", { method: "POST" });
-}
 
 // ---- NOTES API FUNCTIONS -----
 export function getNotes() {
