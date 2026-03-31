@@ -9,6 +9,9 @@ export async function login(payload: { email: string; password: string; remember
         rememberMe: payload.remember,
         callbackURL: "/dashboard",
     });
+    if (error) {
+        throw new Error(error.message);
+    }
     return data;
 }
 
@@ -19,13 +22,16 @@ export async function register(payload: { name: string; email: string; password:
         password: payload.password,
         callbackURL: "/dashboard",
     });
+    if (error) {
+        throw new Error(error.message);
+    }
     return data;
 }
 
 export async function getCurrentUser() {
     const { data: session, error } = await getSession();
     if (error) {
-        console.error("Couldn't retrieve current user:", error)
+        throw new Error(error.message);
     } 
     return session?.user ?? null;
 }
