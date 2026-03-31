@@ -11,7 +11,7 @@ def get_note(
     return (
         db.query(Note)
         .filter(Note.id == note_id)
-        .filter(Note.user_id == user_id)
+        .filter(Note.app_user_id == user_id)
         .first()
     )
 
@@ -27,7 +27,7 @@ def get_notes_with_flashcard_counts(
             func.count(Flashcard.id).label("flashcard_count"),
         )
         .outerjoin(Flashcard, Flashcard.note_id == Note.id)
-        .filter(Note.user_id == user_id)
+        .filter(Note.app_user_id == user_id)
         .group_by(Note.id)
         .order_by(Note.created_at.desc())
         .all()
