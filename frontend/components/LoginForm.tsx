@@ -27,8 +27,8 @@ export default function LoginForm() {
         setError("");
         login.mutate({ email, password, remember },
             {
-                onError: (err: any) => {
-                    setError(err.message || "Login failed");
+                onError: (error) => {
+                    setError(`Error: ${error.message}` || "Error: Login failed");
                 }
             }
         );

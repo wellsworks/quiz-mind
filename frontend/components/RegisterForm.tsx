@@ -34,7 +34,7 @@ export default function RegisterForm() {
                     router.push("/dashboard");
                 },
                 onError: (err: any) => {
-                    setError(err.message || "Registration failed")
+                    setError(`Error: ${err.message}` || "Error: Registration failed")
                 },
             }
         );
