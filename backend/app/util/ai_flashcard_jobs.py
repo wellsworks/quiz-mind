@@ -11,7 +11,7 @@ def create_flashcard_job(
 ):
     job = AIFlashcardJob(
         note_id=note_id,
-        user_id=user_id,
+        app_user_id=user_id,
         model_name=model_name,
         requested_count=requested_count,
         status="pending",
@@ -25,7 +25,7 @@ def get_flashcard_job(db: Session, job_id: int, user_id: int):
     return (
         db.query(AIFlashcardJob)
         .filter(AIFlashcardJob.id == job_id)
-        .filter(AIFlashcardJob.user_id == user_id)
+        .filter(AIFlashcardJob.app_user_id == user_id)
         .first()
     )
 
@@ -43,7 +43,7 @@ def update_job_status(
 def get_flashcard_job_for_note(db: Session, note_id: int, user_id: int):
     return (
         db.query(AIFlashcardJob)
-        .filter(AIFlashcardJob.user_id == user_id)
+        .filter(AIFlashcardJob.app_user_id == user_id)
         .filter(AIFlashcardJob.note_id == note_id)
         .order_by(AIFlashcardJob.id.desc())
         .first()
