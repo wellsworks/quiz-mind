@@ -4,6 +4,7 @@ import "./globals.css";
 import { ReactQueryProvider } from "@/components/ReactQueryProvider";
 import ThemeHydration from "@/components/ThemeHydration";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthGuard } from "@/components/AuthGuard";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -34,8 +35,10 @@ export default function RootLayout({
       >
         <ReactQueryProvider>
           <ThemeHydration>
-            {children}
-            <Toaster />
+            <AuthGuard>
+              {children}
+              <Toaster />
+            </AuthGuard>
           </ThemeHydration>
         </ReactQueryProvider>
       </body>
