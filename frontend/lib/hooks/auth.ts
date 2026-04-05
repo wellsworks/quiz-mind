@@ -32,6 +32,8 @@ export function useUser() {
             return user;
         },
         retry: false,
+        refetchOnWindowFocus: true,
+        refetchInterval: 5 * 60 * 1000,
     });
 }
 
