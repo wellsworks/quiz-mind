@@ -11,7 +11,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 export function GenerateCard({ noteId }: { noteId: string }) {
     const qc = useQueryClient();
 
-    const [jobId, setJobId] = useState("");
+    const [jobId, setJobId] = useState(0);
     const [isGenerating, setIsGenerating] = useState(false);
 
     const generateFlashcard = useGenerateFlashcard(noteId);

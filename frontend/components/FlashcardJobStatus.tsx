@@ -10,7 +10,8 @@ export function FlashcardJobStatus({
     onCancel,
     onRetry,
 }: {
-    status?: "pending" | "processing" | "completed" | "failed";
+    // "pending" | "processing" | "completed" | "failed"
+    status?: string;
     isGenerating: boolean;
     onCancel: () => void;
     onRetry: () => void;
