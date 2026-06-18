@@ -59,7 +59,7 @@ export default function NoteCreateForm() {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="min-w-svh">
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
 
                     <DialogHeader>
@@ -89,7 +89,7 @@ export default function NoteCreateForm() {
                                         id="note content"
                                         required
                                         placeholder="Write your note here"
-                                        className="min-h-[400px]"
+                                        className="min-h-[200px]"
                                         value={content}
                                         onChange={(e) => setContent(e.target.value)}
                                     />
@@ -113,7 +113,7 @@ export default function NoteCreateForm() {
                             type="submit"
                             size="sm" 
                             variant="default" 
-                            disabled={createNote.isLoading}
+                            disabled={createNote.isPending}
                         >
                             Save
                         </Button>
