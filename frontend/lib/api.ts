@@ -1,4 +1,4 @@
-import { LoginResponse } from "./types";
+import { Flashcard, Note } from "./types";
 
 // update BASE_URL using environment variables
 
@@ -36,11 +36,11 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
 
 
 // ---- NOTES API FUNCTIONS -----
-export function getNotes() {
+export function getNotes(): Promise<Note[]> {
     return request("/notes/", { method: "GET", cache: 'no-store' });
 }
 
-export async function getNoteById(id: string) {
+export async function getNoteById(id: string): Promise<Note> {
     return request(`/notes/${id}`, { method: "GET" });
 }
 
@@ -66,19 +66,19 @@ export async function deleteNote(id: string) {
 }
 
 // ------ FLASHCARDS API FUNCTIONS ------
-export async function getFlashcards() {
+export async function getFlashcards(): Promise<Flashcard[]> {
     return request("/flashcards/", { method: "GET", cache: 'no-store' });
 }
 
-export async function getFlashcardById(id: string) {
+export async function getFlashcardById(id: string): Promise<Flashcard> {
     return request(`/flashcards/${id}`, { method: "GET" });
 }
 
-export async function getFlashcardsByNoteId(noteId: string) {
+export async function getFlashcardsByNoteId(noteId: string): Promise<Flashcard[]> {
     return request(`/notes/${noteId}/flashcards`, { method: "GET" });
 }
 
-export async function getStudyFlashcards(noteIdList: number[]) {
+export async function getStudyFlashcards(noteIdList: number[]): Promise<Flashcard[]> {
     if (!noteIdList.length) {
         return request("/flashcards", { method: "GET" });
     } else {
