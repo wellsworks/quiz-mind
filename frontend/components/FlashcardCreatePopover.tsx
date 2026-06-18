@@ -103,7 +103,7 @@ export function FlashcardCreatePopover({ note_id }: { note_id?: number }) {
                         size="sm"
                         type="submit" 
                         variant="default"
-                        disabled={createFlashcard.isLoading}
+                        disabled={createFlashcard.isPending}
                     >
                         Save
                     </Button>

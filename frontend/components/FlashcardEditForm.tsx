@@ -114,7 +114,7 @@ export default function FlashcardEditForm({
                             type="submit"
                             size="sm" 
                             variant="default" 
-                            disabled={editFlashcard.isLoading}
+                            disabled={editFlashcard.isPending}
                         >
                             Save
                         </Button>
