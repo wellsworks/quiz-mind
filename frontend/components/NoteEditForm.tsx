@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUpdateNote, useNoteById } from "@/lib/hooks/notes";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,20 +16,27 @@ import {
 } from "@/components/ui/dialog";
 import { SquarePen } from "lucide-react";
 import { toast } from "sonner";
-import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group"
+import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
 import { Label } from "./ui/label";
+import { Skeleton } from "./ui/skeleton";
 
 export default function NoteEditForm({ noteId }: { noteId: string }) {
-    const { data, isLoading, isError } = useNoteById(noteId);
-    const note = data;
+    const { data: note, isLoading, isError } = useNoteById(noteId);
 
-    const [id, setId] = useState(note ? String(note.id) : "");
-    const [title, setTitle] = useState(note ? note.title : "");
-    const [content, setContent] = useState(note ? note.content : "");
+    const [id, setId] = useState("");
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
 
     const [open, setOpen] = useState(false);
-
     const editNote = useUpdateNote();
+
+    useEffect(() => {
+        if (note) {
+            setId(String(note.id));
+            setTitle(note.title);
+            setContent(note.content);
+        }
+    }, [note]);
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -53,6 +60,25 @@ export default function NoteEditForm({ noteId }: { noteId: string }) {
         setContent(note?.content ?? "");
     }
     
+    if (isLoading) {
+        return (
+            <div className="flex flex-col space-y-2">
+                <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                </div>
+            </div>
+        );
+    }
+
+    if (isError || !note) {
+        return (
+            <div className="text-red-500 text-sm">
+                Something went wrong. Try refreshing the page.
+            </div>
+        );
+    }
 
     return (
         <Dialog 
@@ -76,7 +102,7 @@ export default function NoteEditForm({ noteId }: { noteId: string }) {
                 </Button>
             </DialogTrigger>
         
-            <DialogContent className="min-w-svh">
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
 
                     <DialogHeader>
@@ -106,7 +132,7 @@ export default function NoteEditForm({ noteId }: { noteId: string }) {
                                         id="note content"
                                         required
                                         placeholder="Write your note here"
-                                        className="min-h-[400px]"
+                                        className="min-h-[200px]"
                                         value={content}
                                         onChange={(e) => setContent(e.target.value)}
                                     />
@@ -130,7 +156,7 @@ export default function NoteEditForm({ noteId }: { noteId: string }) {
                             type="submit"
                             size="sm" 
                             variant="default" 
-                            disabled={editNote.isLoading}
+                            disabled={editNote.isPending}
                         >
                             Save
                         </Button>
