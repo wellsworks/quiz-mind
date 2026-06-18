@@ -1,4 +1,4 @@
-import { Flashcard, Note } from "./types";
+import { AIJob, Flashcard, Note } from "./types";
 
 // update BASE_URL using environment variables
 
@@ -115,19 +115,19 @@ export async function deleteFlashcard(id: string) {
 }
 
 //------ AI FLASHCARDS API FUNCTIONS -------//
-export async function startFlashcardGeneration(note_id: string) {
+export async function startFlashcardGeneration(note_id: string): Promise<AIJob> {
     return request(`/notes/${note_id}/flashcards/generate`, {
         method: "POST",
         body: JSON.stringify(note_id)
     });
 }
 
-export async function getAIFlashcardJobByNote(note_id: string) {
+export async function getAIFlashcardJobByNote(note_id: string): Promise<AIJob> {
     return request(`/notes/${note_id}/flashcards/generate`, {
         method: "GET",
     });
 }
 
-export async function getAIJobById(job_id: string) {
+export async function getAIJobById(job_id: string): Promise<AIJob> {
     return request(`/ai/jobs/${job_id}`, { method: "GET" });
 }

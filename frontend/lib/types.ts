@@ -23,3 +23,8 @@ export interface StudySession {
     scope: string;
     note_id: any;
 }
+
+export interface AIJob {
+    job_id: number;
+    status: string;
+}
