@@ -60,7 +60,7 @@ export default function RegisterForm() {
                         placeholder="My Name"
                         required
                         value={name}
-                        onInput={e => setName(e.target.value)}
+                        onInput={e => setName(e.currentTarget.value)}
                     />
                 </Field>
                 <Field>
@@ -74,7 +74,7 @@ export default function RegisterForm() {
                         placeholder="me@example.com"
                         required
                         value={email}
-                        onInput={e => setEmail(e.target.value)}
+                        onInput={e => setEmail(e.currentTarget.value)}
                     />
                 </Field>
                 <Field>
@@ -88,7 +88,7 @@ export default function RegisterForm() {
                         placeholder="Password"
                         required
                         value={password}
-                        onInput={e => setPassword(e.target.value)}
+                        onInput={e => setPassword(e.currentTarget.value)}
                     />
                 </Field>
                 <Field>

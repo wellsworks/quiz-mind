@@ -54,7 +54,7 @@ export default function LoginForm() {
                         placeholder="me@example.com"
                         required
                         value={email}
-                        onInput={e => setEmail(e.target.value)}
+                        onInput={e => setEmail(e.currentTarget.value)}
                     />
                 </Field>
                 <Field>
@@ -68,7 +68,7 @@ export default function LoginForm() {
                         placeholder="Password"
                         required
                         value={password}
-                        onInput={e => setPassword(e.target.value)}
+                        onInput={e => setPassword(e.currentTarget.value)}
                     />
                 </Field>
                 <Field orientation="horizontal">
