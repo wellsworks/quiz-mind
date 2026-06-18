@@ -16,3 +16,10 @@ export interface Flashcard {
     note_id: number; 
     source: string
 }
+
+export interface StudySession {
+    id: number;
+    mode: string;
+    scope: string;
+    note_id: any;
+}
