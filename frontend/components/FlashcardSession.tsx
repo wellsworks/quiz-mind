@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/empty";
 import { NotebookText } from "lucide-react";
 import Link from "next/link";
+import { StudySession } from "@/lib/types.ts";
 
 export default function FlashcardSession() {
     const { data, isLoading, isError } = useNotes();
@@ -26,37 +27,44 @@ export default function FlashcardSession() {
     
     const [allScope, setAllScope] = useState(false);
     const scope = allScope ? "all" : "note";
-    const noteId = noteIdList.length > 1 ? null : noteIdList[0];
+    const note_id = noteIdList.length > 1 ? null : noteIdList[0];
     const mode = "flashcards";
 
-    const [session, setSession] = useState();
+    const defaultSession: StudySession = {
+        id: -1,
+        mode: mode,
+        scope: scope,
+        note_id: note_id, 
+    }
+
+    const [session, setSession] = useState<StudySession>(defaultSession);
     const startSession = useCreateStudySession();
     const stopSession = useStopStudySession(0);
 
 
     function handleStart() {
-        startSession.mutate({ mode, scope, noteId },
+        startSession.mutate({ mode, scope, note_id },
             {
-                onSuccess: (session) => {
-                    setSession(session);
+                onSuccess: (newSession) => {
+                    setSession(newSession);
                 }
             }
         )
     }
 
     function endSession() {
-        stopSession.mutate(session?.id);
-        setSession(null);
+        stopSession.mutate(session.id);
+        setSession(defaultSession);
         setNoteIdList([]);
     }
 
     useEffect(() => {
         return () => {
-            if (session?.id) {
+            if (session.id !== defaultSession.id) {
                 endSession();
             }
         }
-    }, [session?.id])
+    }, [session.id])
 
 
     if (isLoading) {
@@ -100,7 +108,7 @@ export default function FlashcardSession() {
     return (
         <Card>
             <CardContent>
-                {!session && (
+                {session.id === defaultSession.id && (
                     <NoteSelect 
                         onStart={handleStart}
                         setAllScope={setAllScope}
@@ -108,7 +116,7 @@ export default function FlashcardSession() {
                     />
                 )}
 
-                {session && (
+                {session.id !== defaultSession.id && (
                     <div className="space-y-2 px-10">
                         <FlashcardReview noteIdList={noteIdList}/>
                         <div className="flex justify-end gap-2">
