@@ -13,23 +13,24 @@ import {
 } from "@/components/ui/carousel";
 import { Progress } from "./ui/progress";
 import { useEffect, useState } from "react";
+import { Flashcard } from "@/lib/types.ts";
 
 
 export default function FlashcardReview({ noteIdList }: { noteIdList: number[] }) {
-    const [flashcards, setFlashcards] = useState([]);
-    const { data, isLoading, isError } = useStudyFlashcards(noteIdList);
+    const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+    const { data, isLoading, isError } = useStudyFlashcards(noteIdList);    
 
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
     const [count, setCount] = useState(0);
 
-    function shuffle(cards: []) {
+    function shuffle(cards: Flashcard[]) {
         return [...cards].sort(() => Math.random() - 0.5)
     }
 
     useEffect(() => {
         if (data) {
-            setFlashcards(shuffle(data.flat()));
+            setFlashcards(shuffle(data));
         }
     }, [data]);
 
@@ -73,7 +74,7 @@ export default function FlashcardReview({ noteIdList }: { noteIdList: number[] }
         <div className="mx-auto max-w-sm">
             <Carousel setApi={setApi} className="w-full max-w-sm">
                 <CarouselContent>
-                    {flashcards.map((card: any) => (
+                    {flashcards.map((card: Flashcard) => (
                         <CarouselItem key={card.id}>
                             <FlashcardView flashcard={card}/>
                         </CarouselItem>
