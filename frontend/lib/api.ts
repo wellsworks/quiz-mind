@@ -1,4 +1,4 @@
-import { AIJob, Flashcard, Note } from "./types";
+import { AIJob, Flashcard, Note, NoteSummary } from "./types";
 
 // update BASE_URL using environment variables
 
@@ -44,7 +44,7 @@ export async function getNoteById(id: string): Promise<Note> {
     return request(`/notes/${id}`, { method: "GET" });
 }
 
-export async function getNoteSummaries() {
+export async function getNoteSummaries(): Promise<NoteSummary[]> {
     return request("/notes/summary", { method: "GET" });
 }
 

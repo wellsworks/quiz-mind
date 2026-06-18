@@ -28,3 +28,7 @@ export interface AIJob {
     job_id: number;
     status: string;
 }
+
+export interface NoteSummary extends Note {
+    flashcard_count: number;
+}
