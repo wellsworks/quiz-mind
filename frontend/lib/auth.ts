@@ -16,7 +16,7 @@ export const auth = betterAuth({
             enabled: true,
             maxAge: 60 * 60,
             strategy: "jwt",
-            secret: process.env.SECRET_KEY,
+            secret: process.env.BETTER_AUTH_SECRET,
             refreshCache: {
                 updateAge: 60
             }
