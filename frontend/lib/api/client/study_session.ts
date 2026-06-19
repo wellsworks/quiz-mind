@@ -9,6 +9,6 @@ export async function createStudySession(payload: { mode: string; scope: string;
     return request("/study-sessions/", { method: "POST", body: JSON.stringify(payload) });
 }
 
-export async function stopStudySession(id: number) {
+export async function stopStudySession(id: number): Promise<StudySession> {
     return request(`/study-sessions/${id}/end`, { method: "POST", body: JSON.stringify(id) });
 }
