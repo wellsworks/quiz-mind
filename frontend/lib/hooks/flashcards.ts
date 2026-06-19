@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient, QueryClientContext } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, QueryClientContext, dataTagErrorSymbol } from "@tanstack/react-query";
 import {
     getFlashcards,
     getFlashcardById,
@@ -116,9 +116,11 @@ export function useAIJobById(jobId: string) {
         queryKey: ["ai-job", jobId],
         queryFn: () => getAIJobById(jobId!),
         enabled: !!jobId,
-        refetchInterval: (data) => {
-            if (!data) return false;
-            return data.status === "pending" ? 2000 : false;
+        refetchInterval: (query) => {
+            const job = query.state.data;
+            if (!job) return false;
+
+            return job.status === "pending" ? 2000 : false;
         },
     });
 }
