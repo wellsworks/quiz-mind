@@ -10,8 +10,7 @@ alembic==1.13.2
 python-dotenv==1.0.1
 
 # Data validation
-pydantic==2.9.2
-pydantic[email]==2.11.0
+pydantic>=2.9.2
 
 # Authentication
 python-jose[cryptography]==3.3.0
