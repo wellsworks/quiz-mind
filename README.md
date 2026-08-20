@@ -13,11 +13,11 @@ A web application that streamlines studying by allowing users to upload text not
 
 ## 🛠️ Tech Stack
 
-| Component | Technology | Role |
-| **Frontend** | Next.js, React, Tailwind CSS, shadcn | Client interface, state management, UI styling |
-| **Backend** | Python, FastAPI | Asynchronous REST API, OpenAI orchestration |
-| **Database** | PostgreSQL | Relational storage for users, notes, and flashcards |
-| **Auth** | Better Auth | Session handling, security compliance, and user verification |
+Component | Technology | Role 
+- **Frontend** | Next.js, React, Tailwind CSS, shadcn | Client interface, state management, UI styling 
+- **Backend** | Python, FastAPI | Asynchronous REST API, OpenAI orchestration 
+- **Database** | PostgreSQL | Relational storage for users, notes, and flashcards 
+- **Auth** | Better Auth | Session handling, security compliance, and user verification 
 
 ---
 
